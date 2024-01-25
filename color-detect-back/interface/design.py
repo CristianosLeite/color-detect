@@ -1,12 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '.\interface\design.ui'
-#
-# Created by: PyQt5 UI code generator 5.9.2
-#
-# WARNING! All changes made in this file will be lost!
-
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PySide6 import QtCore, QtGui, QtWidgets
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -65,7 +59,7 @@ class Ui_MainWindow(object):
         font = QtGui.QFont()
         font.setPointSize(11)
         font.setBold(True)
-        font.setWeight(75)
+        font.setWeight(QtGui.QFont.Bold)
         font.setKerning(True)
         self.ButtonRestart.setFont(font)
         self.ButtonRestart.setStyleSheet("background-color: rgb(0, 0, 127);\n"
@@ -76,7 +70,7 @@ class Ui_MainWindow(object):
         font = QtGui.QFont()
         font.setPointSize(11)
         font.setBold(True)
-        font.setWeight(75)
+        font.setWeight(QtGui.QFont.Bold)
         font.setKerning(True)
         self.ButtonShutdown.setFont(font)
         self.ButtonShutdown.setStyleSheet("background-color: rgb(0, 0, 127);\n"
@@ -101,7 +95,7 @@ class Ui_MainWindow(object):
         self.Logo = QtWidgets.QLabel(self.centralwidget)
         self.Logo.setGeometry(QtCore.QRect(10, 10, 211, 51))
         self.Logo.setText("")
-        self.Logo.setPixmap(QtGui.QPixmap("/home/conecsa/color-detect/color-detect-back/Logo.png")) 
+        self.Logo.setPixmap(QtGui.QPixmap("/home/conecsa/color-detect/color-detect-back/Logo.png"))
         self.Logo.setObjectName("Logo")
         self.labelIPAddress_2 = QtWidgets.QLabel(self.centralwidget)
         self.labelIPAddress_2.setGeometry(QtCore.QRect(60, 40, 191, 21))
@@ -109,7 +103,7 @@ class Ui_MainWindow(object):
         font.setFamily("ISOCP_IV50")
         font.setPointSize(12)
         font.setBold(True)
-        font.setWeight(75)
+        font.setWeight(QtGui.QFont.Bold)
         font.setKerning(True)
         self.labelIPAddress_2.setFont(font)
         self.labelIPAddress_2.setObjectName("labelIPAddress_2")
@@ -164,4 +158,3 @@ class Ui_MainWindow(object):
         self.LabelStatusCam01_3.setText(_translate("MainWindow", "PLC:"))
         self.labelIPAddress_2.setText(_translate("MainWindow", "Color Detect v1.0"))
         self.LabelCam01_2.setText(_translate("MainWindow", "Conecsa Automação - 2022"))
-

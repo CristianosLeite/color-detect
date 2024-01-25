@@ -257,7 +257,7 @@ class TarefaCaptura(Thread):
         return jpeg.tobytes()
 
     def configura_mascara(self, x1, y1, x2, y2, x3, y3, x4, y4):
-        img = cv.imread('./mask.jpg')
+        img = cv.imread('/home/cristianoleite/color-detect/color-detect-back/mask.jpg')
         img_resized = cv.resize(img, (640, 480))
         points = np.array([[[x1, y1], [x2, y2], [x3, y3], [x4, y4]]])
         print(points)
