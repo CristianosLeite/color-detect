@@ -1,4 +1,3 @@
-from builtins import print
 from threading import Thread
 import cv2 as cv
 import numpy as np
@@ -59,10 +58,7 @@ class TarefaCaptura(Thread):
         self.hasPlc = False
 
         # criar variaveis da máscara e seta posições iniciais
-        self.array_mask = self.get_mask()
-
-        if (self.array_mask == None):
-            self.array_mask = [100, 100, 200, 100, 200, 200, 100, 200]
+        self.array_mask = self.array_mask = [100, 100, 200, 100, 200, 200, 100, 200]
 
         self.mask_pos_1_x = self.array_mask[0]
         self.mask_pos_1_y = self.array_mask[1]
@@ -122,16 +118,13 @@ class TarefaCaptura(Thread):
         else:
             return False
 
-    def getColorsLimits(self, device_address=None):
+    def getColorsLimits(self):
         query = "SELECT * FROM colors_cam01 ORDER BY id DESC LIMIT 1"
         params = ('colors_cam01')
         db.execute(query, params)
         hasColor = db.fetchone()
 
-        print('hasColor: ', hasColor)
-
         if(hasColor):
-            print(hasColor)
             lower_color = hasColor['colormin'].split(',')
             lower_color_array = [int(int(lower_color[0])/2), int(lower_color[1]), int(lower_color[2])]
             self.lower_color = np.array(lower_color_array)
@@ -140,17 +133,13 @@ class TarefaCaptura(Thread):
             upper_color_array = [int(int(upper_color[0])/2), int(upper_color[1]), int(upper_color[2])]
             self.upper_color = np.array(upper_color_array)
 
-    def get_mask(self):
-        query = "SELECT * FROM mask_cam01"
-        params = ('mask_cam01')
-        db.execute(query, params)
-        hasMask = db.fetchone()
+    def load_mask(self, mask):
 
-        if(hasMask):
-            if 'mask' in hasMask and hasMask['mask'] is None:
+        if(mask):
+            if 'mask' in mask and mask['mask'] is None:
                 return False
             
-            array_mask = hasMask['mask'].split(',')
+            array_mask = mask
             self.array_mask = [int(array_mask[0]),int(array_mask[1]),int(array_mask[2]),
                                int(array_mask[3]),int(array_mask[4]),int(array_mask[5]),
                                int(array_mask[6]),int(array_mask[7])]
@@ -165,17 +154,6 @@ class TarefaCaptura(Thread):
                                                self.array_mask[6],
                                                self.array_mask[7])
             return self.array_mask
-
-    def get_mask_api_cam_01(self):
-        query = "SELECT * FROM mask_cam01 ORDER BY id DESC LIMIT 1"
-        params = ('mask')
-        db.execute(query, params)
-        hasMask = db.fetchone()
-
-        if(hasMask and 'mask' in hasMask):
-            return hasMask['mask'].split(',')
-        else:
-            return False
 
     def update_plc(self, plc_banco):
         try:
@@ -250,9 +228,9 @@ class TarefaCaptura(Thread):
                 # faz um AND da imgem gerando assim a máscara verde
                 cv.bitwise_and(inspection_mask, inspection_mask, mask=mask_green)
 
-                contours, hierarchy = cv.findContours(mask_green, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+                contours = cv.findContours(mask_green, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
 
-                for pic, contour in enumerate(contours):
+                for contour in enumerate(contours):
                     area = cv.contourArea(contour)
                     if (area > 50):
                         x, y, w, h = cv.boundingRect(contour)
@@ -269,10 +247,8 @@ class TarefaCaptura(Thread):
                                     wordlen=WordLen.Bit,
                                     pusrdata=bytearray([0b00000001])
                                 )
-                                #print('escreveu no PLC')
                             except:                           
                                 self.hasPlc = False
-                                #print('Erro ao escrever no PLC')
                             
                 self.video = inspection_mask
             else:
@@ -282,17 +258,16 @@ class TarefaCaptura(Thread):
 
 
     def gen(self):
-        ret, jpeg = cv.imencode('.jpg', self.video)
+        jpeg = cv.imencode('.jpg', self.video)
         return jpeg.tobytes()
 
     def configura_mascara(self, x1, y1, x2, y2, x3, y3, x4, y4):
         img = cv.imread('C:/Users/crist/OneDrive/Documentos/GitHub/color-detect/color-detect-back/mask.jpg')
         img_resized = cv.resize(img, (640, 480))
         points = np.array([[[x1, y1], [x2, y2], [x3, y3], [x4, y4]]])
-        print(points)
         poligono_desenhado = cv.fillPoly(img_resized, points, [255, 255, 255], lineType=cv.LINE_AA)
         img_escala_cinza = cv.cvtColor(poligono_desenhado, cv.COLOR_BGR2GRAY)
-        ret, mascara = cv.threshold(img_escala_cinza, 254, 255, cv.THRESH_BINARY)
+        mascara = cv.threshold(img_escala_cinza, 254, 255, cv.THRESH_BINARY)
         return mascara
 
     def modifica_mascara(self, x1, y1, x2, y2, x3, y3, x4, y4):

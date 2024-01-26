@@ -1,11 +1,12 @@
+import re
 import socket
+import psycopg2
+
 from flask import Flask, Response, request, jsonify
 from flask_cors import CORS
-import psycopg2
 from psycopg2.extras import RealDictCursor
 from tarefaCaptura import TarefaCaptura
 from credentials import db_credentials
-import re
 
 # Configure PostgreSQL connection parameters
 
@@ -125,7 +126,6 @@ def genVideoCam01():
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
         except:
-            print('An error occurred')
             return False
 
 @app.route('/cam01')
@@ -140,12 +140,11 @@ def get_status_run_01():
 def get_ip_address():
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        s.connect(("8.8.8.8", 80))
+        s.connect(("127.0.0.1", 80))
         ip_address = s.getsockname()[0]
         s.close()
         return {'ip_address': ip_address}
     except Exception as e:
-        print('Error fetching IP: ', e)
         return {'error': 'IP not found' }
 
 @app.route('/cam01/plc', methods=['POST', 'GET'])
@@ -193,10 +192,10 @@ def save_color_01():
     if(request.method == 'POST'):
         colors = request.get_json()
         if(colors):
-            if 'colorMin' in colors and 'colorMax' in colors:
+            if 'colormin' in colors and 'colormax' in colors:
                 colorModel = colors
                 query = "INSERT INTO public.colors_cam01 (colormin, colormax) VALUES (%s, %s) ON CONFLICT (id) DO UPDATE SET colormin = excluded.colormin, colormax = excluded.colormax;"
-                db.execute(query, (colorModel['colorMin'], colorModel['colorMax']))
+                db.execute(query, (colorModel['colormin'], colorModel['colormax']))
                 conn.commit()
             else:
                 return {"error": "Missing 'colormin' or 'colormax' in request data"}, 400
@@ -225,24 +224,24 @@ def save_mask_01():
                 query = "INSERT INTO public.mask_cam01 (mask) VALUES (%s) ON CONFLICT (id) DO UPDATE SET mask = excluded.mask;"
                 db.execute(query, (maskModel['mask'],))
                 conn.commit()
+                tfc01.load_mask(maskModel['mask'].split(','))
                 return {"message": "Máscara atualizada com sucesso!"}
             else:
                 return {"error": "Missing 'mask' in request data"}, 400
 
-        tfc01.get_mask()
         return {"message": "Máscara atualizada com sucesso!"}
 
     if(request.method == 'GET'):
         query = "SELECT * FROM mask_cam01 ORDER BY id DESC LIMIT 1"
-        db.execute(query)
+        params = ('mask')
+        db.execute(query, params)
         hasMask = db.fetchone()
 
-        if(hasMask):
-            tfc01.get_mask()
-            return {"mask": tfc01.get_mask_api_cam_01()}
+        if(hasMask and 'mask' in hasMask):
+            tfc01.load_mask(hasMask['mask'].split(','))
+            return {'mask': hasMask['mask'].split(',')}
         else:
-            return {"message": "Não há máscara cadastrada!"}
-
+            return False
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=4000, threaded=True, use_reloader=False)

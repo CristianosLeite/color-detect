@@ -44,8 +44,6 @@ class Interface(QMainWindow, Ui_MainWindow):
             request = requests.get(URL_IP_ADDRESS)
             req_json = request.json()
 
-            print(req_json)
-
             if req_json['ip_address']:
                 self.labelIPAddress.setText(req_json['ip_address'])
                 self.labelIPAddress.setStyleSheet("background-color: green; border: 1px solid black;")
@@ -103,7 +101,6 @@ class Interface(QMainWindow, Ui_MainWindow):
     def execute_reboot(self):
         os.system("sudo shutdown -r now")
         time.sleep(1)
-
 
 if __name__ == '__main__':
     qt = QApplication(sys.argv)
