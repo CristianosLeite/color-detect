@@ -1,5 +1,5 @@
 import { Component } from "react"
-import { PrincipalConfigCamera, Header, Titulo, Content, ContentLinha01, ContentLinha02, InputIp, SelectCam, ButtonBlue } from "./styles"
+import { PrincipalConfigCamera, Header, Titulo, Content, ContentLinha01, ContentLinha02, InputIp, ButtonBlue } from "./styles"
 
 
 export default class ConfigCamera extends Component {
@@ -60,6 +60,4 @@ export default class ConfigCamera extends Component {
             </PrincipalConfigCamera>
         )
     }
-
-
 }

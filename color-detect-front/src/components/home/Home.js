@@ -32,8 +32,8 @@ export default class Home extends Component {
             urlCameraAux02: '',
             corInicialMin: '255,255,255',
             corInicialMax: '255,255,255',
-            newColorMin: '',
-            newColorMax: '',
+            newColormin: '',
+            newColormax: '',
         }
 
         this.urlFrame = this.state.urlCamera
@@ -108,8 +108,8 @@ export default class Home extends Component {
             this.setState({
                 corInicialMin: cor,
                 corInicialMax: cor,
-                newColorMin: cor,
-                newColorMax: cor,
+                newColormin: cor,
+                newColormax: cor,
             })
 
 
@@ -131,15 +131,15 @@ export default class Home extends Component {
         })
     }
 
-    updateColorMin = (newColor) => {
+    updateColormin = (newColor) => {
         this.setState({
-            newColorMin: newColor
+            newColormin: newColor
         })
     }
 
-    updateColorMax = (newColor) => {
+    updateColormax = (newColor) => {
         this.setState({
-            newColorMax: newColor
+            newColormax: newColor
         })
     }
 
@@ -159,8 +159,9 @@ export default class Home extends Component {
             .then(response => {
                 let data = response.data
                 if (data) {
-                    let limitMin = data.limit.colorMin.split(',')
-                    let limitMax = data.limit.colorMax.split(',')
+                    console.log(data)
+                    let limitMin = data.limit.colormin.split(',')
+                    let limitMax = data.limit.colormax.split(',')
                     let sMin = parseInt(parseInt(limitMin[1]) / 2.55)
                     let vMin = parseInt(parseInt(limitMin[2]) / 2.55)
                     let sMax = parseInt(parseInt(limitMax[1]) / 2.55)
@@ -169,8 +170,8 @@ export default class Home extends Component {
                     this.setState({
                         corInicialMin: `${limitMin[0]},${sMin}%,${vMin}%`,
                         corInicialMax: `${limitMax[0]},${sMax}%,${vMax}%`,
-                        newColorMin: `${limitMin[0]},${sMin}%,${vMin}%`,
-                        newColorMax: `${limitMax[0]},${sMax}%,${vMax}%`
+                        newColormin: `${limitMin[0]},${sMin}%,${vMin}%`,
+                        newColormax: `${limitMax[0]},${sMax}%,${vMax}%`
                     })
                 }
 
@@ -181,16 +182,17 @@ export default class Home extends Component {
                     title: 'Ops.',
                     text: 'Ocorreu algum erro ao conectar ao controlador!',
                 })
+                console.log(error)
             })
     }
 
     saveColor = () => {
-        let hsvArrayMin = this.state.newColorMin.split(',')
+        let hsvArrayMin = this.state.newColormin.split(',')
         let hMin = hsvArrayMin[0]
         let sMin = parseInt(parseInt(hsvArrayMin[1].replace('%', '')) * 2.55)
         let vMin = parseInt(parseInt(hsvArrayMin[2].replace('%', '')) * 2.55)
 
-        let hsvArrayMax = this.state.newColorMax.split(',')
+        let hsvArrayMax = this.state.newColormax.split(',')
         let hMax = hsvArrayMax[0]
         let sMax = parseInt(parseInt(hsvArrayMax[1].replace('%', '')) * 2.55)
         let vMax = parseInt(parseInt(hsvArrayMax[2].replace('%', '')) * 2.55)
@@ -199,8 +201,8 @@ export default class Home extends Component {
         let corMax = `${hMax},${sMax},${vMax}`
 
         const color = {
-            colorMin: corMin,
-            colorMax: corMax
+            colormin: corMin,
+            colormax: corMax
         }
 
         axios.post(`${this.state.urlCamera}/color`, color, {timeout: 3000})
@@ -244,13 +246,13 @@ export default class Home extends Component {
                             <MostrarRgb title="Cor mínimo" 
                                 cor={this.state.corInicialMin} 
                                 urlCamera={this.state.urlCamera} 
-                                newColor={this.updateColorMin}
+                                newColor={this.updateColormin}
                             >
                             </MostrarRgb>
                             <MostrarRgb title="Cor máximo" 
                                 cor={this.state.corInicialMax}
                                 urlCamera={this.state.urlCamera} 
-                                newColor={this.updateColorMax}
+                                newColor={this.updateColormax}
                             >
                             </MostrarRgb>
                             <ButtonBlue onClick={this.saveColor}>Salvar</ButtonBlue>
