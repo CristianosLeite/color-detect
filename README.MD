@@ -83,7 +83,5 @@ This project is licensed under the [GPL-3.0 License](LICENSE).
 
 ## Authors
 
-Douglas Venâncio - [douglasvenancio](https://github.com/faraddouglas)
-Cristiano Leite - [cristianosleite](https://github.com/CristianosLeite)
-
-
+Douglas Venâncio - [@douglasvenancio](https://github.com/faraddouglas)
+Cristiano Leite - [@cristianosleite](https://github.com/CristianosLeite)
