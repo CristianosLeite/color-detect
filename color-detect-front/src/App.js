@@ -1,18 +1,12 @@
-import { Component } from 'react'
-
-
-import { Rotas } from './routes'
-
+import { Component } from "react";
+import { Rotas } from "./routes";
 
 export default class App extends Component {
-
-    render() {
-        return (
-            <div className="App">
-                <Rotas />
-            </div>
-        )
-    }
-
+  render() {
+    return (
+      <div className="App">
+        <Rotas />
+      </div>
+    );
+  }
 }
-
