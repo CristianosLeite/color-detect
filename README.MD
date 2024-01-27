@@ -7,6 +7,9 @@ O sistema conta com uma interface web para configuração dos parâmetros de det
 
 ## Installation
 
+### Pre-requisitos:
+Necessário ter o Python 3.6 ou superior instalado na máquina.
+
 1. Clone the repository.
 
 ```bash
@@ -58,6 +61,9 @@ Ao executar o comando a interface desktop e a API serão iniciadas.
 Obs: Pode ser necessário executar o comando `python3` ao invés de `python` dependendo da configuração do seu sistema.
 
 ## Installation (Frontend)
+
+### Pre-requisitos:
+Necessário ter o Node.js instalado na máquina.
 
 Para instalar o frontend do projeto, siga os seguintes passos:
 
