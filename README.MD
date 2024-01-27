@@ -7,6 +7,9 @@ O sistema conta com uma interface web para configuração dos parâmetros de det
 
 ## Installation
 
+### Pre-requisitos:
+Necessário ter o Python 3.6 ou superior instalado na máquina.
+
 1. Clone the repository.
 
 ```bash
@@ -25,26 +28,42 @@ Este projeto foi desenvolvido utilizando o PostgreSQL como banco de dados. Após
 touch credentials.py
 ```
 
-Adione as seguintes variáveis de ambiente ao arquivo `credentials.py`:
+No Windows utilize o comando `type nul > credentials.py` para criar o arquivo.
+
+Declare uma variavel db_credentials no arquivo `credentials.py` com as credenciais do banco de dados:
+
+Exemplo:
 
 ```bash
-export DB_USER='user'
-export DB_PASSWORD='password'
-export DB_HOST='host'
-export DB_PORT='port'
-export DB_NAME='database_name'
+    db_credentials = {
+    'DB_NAME': 'postgres',
+    'DB_USER': 'postgres',
+    'DB_PASSWORD': 'postgres',
+    'DB_HOST': 'localhost',
+    'DB_PORT': '5432'
+    }
 ```
+
+Ou se preferir utilize variáveis de ambiente para armazenar as credenciais do banco de dados.
+Obs: Caso opte por utilizar variáveis de ambiente, é necessário alterar o arquivo `database.py` para que o mesmo utilize as variáveis de ambiente.
 
 3. Run the application.
 
 ```bash
 python api.py
+```
+
+```bash	
 python class_interface.py
 ```
 
 Ao executar o comando a interface desktop e a API serão iniciadas.
+Obs: Pode ser necessário executar o comando `python3` ao invés de `python` dependendo da configuração do seu sistema.
 
 ## Installation (Frontend)
+
+### Pre-requisitos:
+Necessário ter o Node.js instalado na máquina.
 
 Para instalar o frontend do projeto, siga os seguintes passos:
 
@@ -53,7 +72,6 @@ Para instalar o frontend do projeto, siga os seguintes passos:
 ```bash
 cd ../color-detect-front
 ```
-
 
 2. Run `npm install` to install the dependencies.
 
@@ -72,6 +90,8 @@ npm start
 A interface web pode ser acessada através do endereço `http://localhost:3000/`.
 
 Após acessar a interface web, é necessário que já tenha um plc conectado à mesma rede para que seja possível a comunicação entre o plc e a interface web.
+
+Alternativamente você pode utilizar um serviço como o [pm2](https://github.com/Unitech/pm2) para iniciar a aplicação em background.
 
 ## Contributing
 
