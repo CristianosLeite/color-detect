@@ -72,7 +72,7 @@ class TarefaCaptura(Thread):
         upper_color = np.array([57, 240, 240], np.uint8)
         return upper_color
 
-    def get_colors_limits(self, colors):
+    def update_color(self, colors):
         if colors:
             if colors['colormin'] == '' or colors['colormax'] == '':
                 self.lower_color = self.config_lower_color()
@@ -114,7 +114,12 @@ class TarefaCaptura(Thread):
     def reset_mask(self):
         self.mask_pos = [(100, 50), (200, 50), (200, 150), (100, 150)]
         self.mask = self.config_mask()
-    
+
+    def update_mask(self, mask):
+        if mask:
+            self.load_mask(mask)
+            self.modify_mask(*self.array_mask)
+
     def update_plc(self, plc_banco):
         try:
             if plc_banco:

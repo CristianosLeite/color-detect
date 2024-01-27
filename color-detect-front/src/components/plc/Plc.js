@@ -40,15 +40,15 @@ export default class Plc extends Component {
   }
 
   updateIpMask = (e) => {
-    //e.target.value = e.target.value.replace(/\D/g, "")
-    //e.target.value = e.target.value.replace(/(\d{3})(\d)/, "$1.$2")
-    //e.target.value = e.target.value.replace(/(\d{3})(\d)/, "$1.$2")
-    //e.target.value = e.target.value.replace(/(\d{3})(\d)/, "$1.$2")
-    //e.target.value = e.target.value.replace(/(\d{3})\d+?$/, "$1")
-
-    this.setState({
-      ipPlc: e.target.value,
-    });
+    let ip = e.target.value;
+    if (ip.length <= 15) {
+      ip = ip.replace(/(\d{3})(\d)/, "$1.$2");
+      ip = ip.replace(/(\d{3})(\d)/, "$1.$2");
+      ip = ip.replace(/(\d{3})(\d)/, "$1.$2");
+      this.updateIp(ip);
+    }
+    
+    return;
   }
 
   updateIp = (e) => {
@@ -98,7 +98,19 @@ export default class Plc extends Component {
           });
         }
       })
-      .catch((error) => {});
+      .catch((error) => {
+        let message = "Ocorreu um ao carregar informações do PLC\nTente novamente.";
+        if (error.status === 400 || error.status === 500) {
+          message = error.data.error;
+        } else if (error.status === 404) {
+          message = error.data.message;
+        }
+        Swal.fire({
+          icon: "error",
+          title: "Ops.",
+          text: message,
+        });
+      });
   }
 
   savePlc = () => {
@@ -123,14 +135,20 @@ export default class Plc extends Component {
         Swal.fire({
           icon: "success",
           title: "Salvo.",
-          text: "PLC salvo com sucesso!",
+          text: response.data.message,
         });
       })
       .catch((error) => {
+        let message = "Ocorreu um erro ao salvar o PLC.\nTente novamente.";
+        if (error.status === 400 || error.status === 500) {
+          message = error.data.error;
+        } else if (error.status === 404) {
+          message = error.data.message;
+        }
         Swal.fire({
           icon: "error",
           title: "Ops.",
-          text: "Ocorreu algum erro ao salvar o PLC!",
+          text: message,
         });
       });
   }

@@ -75,24 +75,35 @@ export default class AjusteMascara extends Component {
     axios
       .get(`http://127.0.0.1:4000/cam01/mask`, { timeout: 3000 })
       .then((response) => {
+        console.log(response.data);
         let data = response.data;
         if (data) {
           this.setState({
-            x1: parseInt(data.mask[0]),
-            y1: parseInt(data.mask[1]),
-            x2: parseInt(data.mask[2]),
-            y2: parseInt(data.mask[3]),
-            x3: parseInt(data.mask[4]),
-            y3: parseInt(data.mask[5]),
-            x4: parseInt(data.mask[6]),
-            y4: parseInt(data.mask[7]),
+            x1: parseInt(data.mask['mask'][0]),
+            y1: parseInt(data.mask['mask'][1]),
+            x2: parseInt(data.mask['mask'][2]),
+            y2: parseInt(data.mask['mask'][3]),
+            x3: parseInt(data.mask['mask'][4]),
+            y3: parseInt(data.mask['mask'][5]),
+            x4: parseInt(data.mask['mask'][6]),
+            y4: parseInt(data.mask['mask'][7]),
           });
         }
       })
       .catch((error) => {
-        console.log(error);
+        let message = "Ocorreu um erro ao buscar a máscara.\nTente novamente.";
+        if (error.status === 400 || error.status === 500) {
+          message = error.data.error;
+        } else if (error.status === 404) {
+          message = error.data.message;
+        }
+        Swal.fire({
+          icon: "error",
+          title: "Ops.",
+          text: message,
+        });
       });
-  };
+  }
 
   saveMask = () => {
     if (this.state.urlCamera === '') {
@@ -121,15 +132,20 @@ export default class AjusteMascara extends Component {
         Swal.fire({
           icon: "success",
           title: "Salvo.",
-          text: "Máscara atualizada com sucesso!",
+          text: response.data.message,
         });
-
       })
       .catch((error) => {
+        let message = "Ocorreu um erro ao salvar a máscara.\nTente novamente.";
+        if (error.status === 400 || error.status === 500) {
+          message = error.data.error;
+        } else if (error.status === 404) {
+          message = error.data.message;
+        }
         Swal.fire({
           icon: "error",
           title: "Ops.",
-          text: "Ocorreu algum erro ao atualizar máscara!",
+          text: message,
         });
       });
   }

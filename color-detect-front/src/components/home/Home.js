@@ -67,11 +67,20 @@ export default class Home extends Component {
       isNaN(g) ||
       isNaN(b)
     ) {
-      alert("Please enter numeric RGB values!");
+      Swal.fire({
+        icon: "error",
+        title: "Ops.",
+        text: "Por favor, informe valores RGB válidos.",
+      });
+
       return;
     }
     if (r < 0 || g < 0 || b < 0 || r > 255 || g > 255 || b > 255) {
-      alert("RGB values must be in the range 0 to 255.");
+      Swal.fire({
+        icon: "error",
+        title: "Ops.",
+        text: "Por favor, informe valores RGB válidos.",
+      });
       return;
     }
     r = r / 255;
@@ -215,12 +224,17 @@ export default class Home extends Component {
         }
       })
       .catch((error) => {
+        let message = "Ocorreu um erro ao carregar as cores.\nTente novamente.";
+        if (error.status === 400 || error.status === 500) {
+          message = error.data.error;
+        } else if (error.status === 404) {
+          message = error.data.message;
+        }
         Swal.fire({
           icon: "error",
           title: "Ops.",
-          text: "Ocorreu algum erro ao conectar ao controlador!",
+          text: message,
         });
-        console.log(error);
       });
   }
 
@@ -258,14 +272,20 @@ export default class Home extends Component {
         Swal.fire({
           icon: "success",
           title: "Salvo.",
-          text: "Limites de cores modificadas com sucesso!",
+          text: response.data.message,
         });
       })
       .catch((error) => {
+        let message = "Ocorreu um erro ao salvar o limite de cores.\n Tente novamente.";
+        if (error.status === 400 || error.status === 500) {
+          message = error.data.error;
+        } else if (error.status === 404) {
+          message = error.data.message;
+        }
         Swal.fire({
           icon: "error",
           title: "Ops.",
-          text: "Ocorreu algum erro ao salvar os limites de cores!",
+          text: message,
         });
       });
   }

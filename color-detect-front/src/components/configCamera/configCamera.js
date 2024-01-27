@@ -28,14 +28,14 @@ export default class ConfigCamera extends Component {
 
   updateIpMask = (e) => {
     let ip = e.target.value;
-    if (e.target.value.length <= 15) {
+    if (ip.length <= 15) {
       ip = ip.replace(/(\d{3})(\d)/, "$1.$2");
       ip = ip.replace(/(\d{3})(\d)/, "$1.$2");
       ip = ip.replace(/(\d{3})(\d)/, "$1.$2");
       this.updateIp(ip);
-    } else if (e.target.value.length > 15) {
-      return;
     }
+    
+    return;
   }
 
   conectarCamera = (e) => {
@@ -43,7 +43,7 @@ export default class ConfigCamera extends Component {
         Swal.fire({
             icon: 'error',
             title: "Não permitido!",
-            text: "Necessário informar Ip."
+            text: "Necessário informar um Ip."
         })
 
         return;
@@ -56,6 +56,7 @@ export default class ConfigCamera extends Component {
         
         return;
     }
+
     const ipArray = this.state.ipCamera.split(".");
     if (ipArray.length === 0) return;
 
