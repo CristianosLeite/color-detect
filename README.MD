@@ -25,15 +25,24 @@ Este projeto foi desenvolvido utilizando o PostgreSQL como banco de dados. Após
 touch credentials.py
 ```
 
-Adione as seguintes variáveis de ambiente ao arquivo `credentials.py`:
+No Windows utilize o comando `type nul > credentials.py` para criar o arquivo.
+
+Declare uma variavel db_credentials no arquivo `credentials.py` com as credenciais do banco de dados:
+
+Exemplo:
 
 ```bash
-export DB_USER='user'
-export DB_PASSWORD='password'
-export DB_HOST='host'
-export DB_PORT='port'
-export DB_NAME='database_name'
+    `db_credentials = {
+    'DB_NAME': 'postgres',
+    'DB_USER': 'postgres',
+    'DB_PASSWORD': 'postgres',
+    'DB_HOST': 'localhost',
+    'DB_PORT': '5432'
+    }`
 ```
+
+Ou se preferir utilize variáveis de ambiente para armazenar as credenciais do banco de dados.
+Obs: Caso opte por utilizar variáveis de ambiente, é necessário alterar o arquivo `database.py` para que o mesmo utilize as variáveis de ambiente.
 
 3. Run the application.
 
