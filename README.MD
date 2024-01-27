@@ -80,3 +80,9 @@ Contributions are welcome! Please follow the guidelines in the [CONTRIBUTING.md]
 ## License
 
 This project is licensed under the [GPL-3.0 License](LICENSE).
+
+## Authors
+
+Douglas Venâncio - [douglasvenancio](@faraddouglas)
+Cristiano Leite - [cristianosleite](@cristianosleite)
+
