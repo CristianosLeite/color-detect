@@ -48,10 +48,14 @@ Obs: Caso opte por utilizar variáveis de ambiente, é necessário alterar o arq
 
 ```bash
 python api.py
+```
+
+```bash	
 python class_interface.py
 ```
 
 Ao executar o comando a interface desktop e a API serão iniciadas.
+Obs: Pode ser necessário executar o comando `python3` ao invés de `python` dependendo da configuração do seu sistema.
 
 ## Installation (Frontend)
 
@@ -62,7 +66,6 @@ Para instalar o frontend do projeto, siga os seguintes passos:
 ```bash
 cd ../color-detect-front
 ```
-
 
 2. Run `npm install` to install the dependencies.
 
@@ -81,6 +84,8 @@ npm start
 A interface web pode ser acessada através do endereço `http://localhost:3000/`.
 
 Após acessar a interface web, é necessário que já tenha um plc conectado à mesma rede para que seja possível a comunicação entre o plc e a interface web.
+
+Alternativamente você pode utilizar um serviço como o [pm2](https://github.com/Unitech/pm2) para iniciar a aplicação em background.
 
 ## Contributing
 
