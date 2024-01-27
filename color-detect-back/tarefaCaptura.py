@@ -6,6 +6,7 @@ import snap7
 from flask import Flask
 from threading import Thread
 from snap7.types import Areas, WordLen
+from time import sleep
 
 app = Flask(__name__)
 
@@ -43,6 +44,8 @@ class TarefaCaptura(Thread):
 
         self.mask = self.config_mask()
 
+        self.api_status_code = 0
+
     def rgb_to_hsv(self, r, g, b):
         r, g, b = r / 255.0, g / 255.0, b / 255.0
         mx = max(r, g, b)
@@ -73,13 +76,17 @@ class TarefaCaptura(Thread):
 
     def get_colors_limits(self, colors):
         if colors:
-            lower_color = colors['colormin'].split(',')
-            lower_color_array = [int(int(lower_color[0])/2), int(lower_color[1]), int(lower_color[2])]
-            self.lower_color = np.array(lower_color_array)
+            if colors['colormin'] == '' or colors['colormax'] == '':
+                self.lower_color = self.config_lower_color()
+                self.upper_color = self.config_upper_color()
+            else:
+                lower_color = colors['colormin'].split(',')
+                lower_color_array = [int(int(lower_color[0])/2), int(lower_color[1]), int(lower_color[2])]
+                self.lower_color = np.array(lower_color_array)
 
-            upper_color = colors['colormax'].split(',')
-            upper_color_array = [int(int(upper_color[0])/2), int(upper_color[1]), int(upper_color[2])]
-            self.upper_color = np.array(upper_color_array)
+                upper_color = colors['colormax'].split(',')
+                upper_color_array = [int(int(upper_color[0])/2), int(upper_color[1]), int(upper_color[2])]
+                self.upper_color = np.array(upper_color_array)
 
     def gen(self):
         ret, jpeg = cv.imencode('.jpg', self.video)
@@ -116,40 +123,49 @@ class TarefaCaptura(Thread):
                 plc_api = {key: plc_banco[key] for key in ['ip', 'rack', 'slot', 'var_cam']}
                 array_var_cam = plc_api['var_cam'].split(',')
                 self.plc = plc_api
-                self.db_number, self.start_bit = map(int, array_var_cam[0:2])
+                self.db_number, self.start_bit = map(int, array_var_cam[:2])
 
+                sleep(1)
                 plc_state = self.s7.get_cpu_state()
-                print('PLC state: ', plc_state)
                 if plc_state != 'S7CpuStatusUnknown':
                     self.has_plc = True
                     return True
 
-                self.s7.connect(
-                    address=self.plc['ip'],
-                    rack=int(self.plc['rack']),
-                    slot=int(self.plc['slot']),
-                    tcpport=102
-                )
-                print('PLC connected')
-                return True
+                self.connect_to_plc()
+                return False
             else:
-                print('PLC não cadastrado no banco de dados')
+                print('PLC not registered in the database')
                 self.has_plc = False
                 return False
 
         except Exception as e:
-            print('Erro ao conectar ao PLC: ', e)
-            try:
-                self.s7.disconnect()
-                self.s7.connect(
-                    address=self.plc['ip'],
-                    rack=int(self.plc['rack']),
-                    slot=int(self.plc['slot']),
-                    tcpport=102
-                )
+            print(f'Error connecting to PLC: {e}')
+            if self.reconnect_to_plc():
                 return True
-            except Exception as e:
-                print('Erro ao conectar ao PLC 2ª tentativa: ', e)
+            return False
+
+    def connect_to_plc(self):
+        try:
+            sleep(1)
+            self.s7.connect(
+                address=self.plc['ip'],
+                rack=int(self.plc['rack']),
+                slot=int(self.plc['slot']),
+                tcpport=102
+            )
+            print('PLC connected')
+        except Exception as e:
+            print(f'Error connecting to PLC: {e}')
+
+    def reconnect_to_plc(self):
+        try:
+            sleep(1)
+            self.s7.disconnect()
+            sleep(2)
+            self.connect_to_plc()
+            return True
+        except Exception as e:
+            print(f'Error reconnecting to PLC: {e}')
             return False
 
     def run(self):
@@ -190,9 +206,17 @@ class TarefaCaptura(Thread):
 
                 self.video = inspection_mask
             else:
-                print('Ocorreu um erro ao inciar a câmera!')
-                self.cam_run = False
-                self.cap = cv.VideoCapture(0)
+                if self.cam_run:
+                    print('Ocorreu um erro ao inciar a câmera!')
+                    self.cam_run = False
+                    self.cap = cv.VideoCapture(0)
+                else:
+                    print('A câmera foi desligada!')
+
+    def stop(self):
+        self.cam_run = False
+        self.ThreadActive = False
+        self.cap.release()
 
 if __name__ == '__main__':
     app.run()

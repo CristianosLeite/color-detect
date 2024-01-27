@@ -90,7 +90,7 @@ class Interface(QMainWindow, Ui_MainWindow):
             self.request_get_ip()
             time.sleep(1)
             self.get_status_cam01()
-            time.sleep(1)
+            time.sleep(2)
             self.get_status_plc01()
             time.sleep(1)
 
