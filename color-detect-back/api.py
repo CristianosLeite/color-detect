@@ -139,6 +139,7 @@ def get_mask():
 if __name__ == '__main__':
     print('Server running on port 4000')
     serve(app, host='0.0.0.0', port=4000, threads=2, asyncore_use_poll=True)
+    db.close()
     print('Server stopped')
     tfc01.stop()
     exit(0)
