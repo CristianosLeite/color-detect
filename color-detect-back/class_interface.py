@@ -7,9 +7,9 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QApplication, QMainWindow
 from interface.design import Ui_MainWindow
 
-URL_IP_ADDRESS = 'http://127.0.0.1:4000/cam01/get_ip_address'
-URL_STATUS_CAM01 = 'http://127.0.0.1:4000/cam01/get_status_run'
-URL_STATUS_PLC_CAM01 = 'http://127.0.0.1:4000/cam01/plc'
+URL_IP_ADDRESS = 'http://${ip0}.${ip1}.${ip2}.${ip3}:4000/cam01/get_ip_address'
+URL_STATUS_CAM01 = 'http://${ip0}.${ip1}.${ip2}.${ip3}:4000/cam01/get_status_run'
+URL_STATUS_PLC_CAM01 = 'http://${ip0}.${ip1}.${ip2}.${ip3}:4000/cam01/plc'
 
 
 class Interface(QMainWindow, Ui_MainWindow):
