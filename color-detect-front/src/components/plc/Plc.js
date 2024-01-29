@@ -51,9 +51,9 @@ export default class Plc extends Component {
     return;
   }
 
-  updateIp = (e) => {
+  updateIp = (value) => {
     this.setState({
-      value: e.target.value,
+      ipPlc: value,
     });
   }
 
@@ -82,8 +82,17 @@ export default class Plc extends Component {
   }
 
   getPlc = () => {
+    if (this.state.urlCamera === "") {
+      return;
+    }
+
+    let ip0 = this.state.urlCamera.split(".")[0];
+    let ip1 = this.state.urlCamera.split(".")[1];
+    let ip2 = this.state.urlCamera.split(".")[2];
+    let ip3 = this.state.urlCamera.split(".")[3];
+
     axios
-      .get(`http://127.0.0.1:4000/cam01/plc`, { timeout: 3000 })
+      .get(`http://${ip0}.${ip1}.${ip2}.${ip3}:4000/cam01/plc`, { timeout: 3000 })
       .then((response) => {
         let data = response.data;
         if (data) {
@@ -129,8 +138,14 @@ export default class Plc extends Component {
       slot: this.state.slot,
       var_cam: `${this.state.db},${this.state.bit}`,
     };
+
+    let ip0 = this.state.urlCamera.split(".")[0];
+    let ip1 = this.state.urlCamera.split(".")[1];
+    let ip2 = this.state.urlCamera.split(".")[2];
+    let ip3 = this.state.urlCamera.split(".")[3];
+
     axios
-      .post(`http://127.0.0.1:4000/cam01/plc`, plc, { timeout: 3000 })
+      .post(`http://${ip0}.${ip1}.${ip2}.${ip3}:4000/cam01/plc`, plc, { timeout: 3000 })
       .then((response) => {
         Swal.fire({
           icon: "success",
