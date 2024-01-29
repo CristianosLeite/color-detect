@@ -32,12 +32,12 @@ export default class AjusteMascara extends Component {
     };
   }
 
-  componentWillReceiveProps = (props) => {
+  componentWillReceiveProps = async (props) => {
     this.setState({
       urlCamera: props.urlCamera,
     });
 
-    this.getMask();
+    await this.getMask();
   }
 
   updateIputs = (e) => {
@@ -71,7 +71,7 @@ export default class AjusteMascara extends Component {
     }
   }
 
-  getMask = () => {
+  getMask = async () => {
     if (this.state.urlCamera === '') {
         return;
     }
@@ -81,7 +81,7 @@ export default class AjusteMascara extends Component {
     let ip2 = this.state.urlCamera.split(".")[2];
     let ip3 = this.state.urlCamera.split(".")[3];
 
-    axios
+    await axios
       .get(`http://${ip0}.${ip1}.${ip2}.${ip3}/mask`, { timeout: 3000 })
       .then((response) => {
         console.log(response.data);
@@ -114,7 +114,7 @@ export default class AjusteMascara extends Component {
       });
   }
 
-  saveMask = () => {
+  saveMask = async () => {
 
     if (this.state.urlCamera === '') {
         Swal.fire({
@@ -136,13 +136,13 @@ export default class AjusteMascara extends Component {
 
     let mask = { mask: `${x1},${y1},${x2},${y2},${x3},${y3},${x4},${y4}` };
 
-    let ip0 = this.state.urlCamera.split(".")[0];
+    let ip0 = this.state.urlCamera.split(".")[0].replace('http://', '')
     let ip1 = this.state.urlCamera.split(".")[1];
     let ip2 = this.state.urlCamera.split(".")[2];
     let ip3 = this.state.urlCamera.split(".")[3];
 
-    axios
-      .post(`http://${ip0}.${ip1}.${ip2}.${ip3}:4000/cam01/mask`, mask, { timeout: 3000 })
+    await axios
+      .post(`http://${ip0}.${ip1}.${ip2}.${ip3}/cam01/mask`, mask, { timeout: 3000 })
       .then((response) => {
         Swal.fire({
           icon: "success",
