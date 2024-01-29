@@ -31,12 +31,12 @@ export default class Plc extends Component {
     };
   }
 
-  componentWillReceiveProps = (props) => {
+  componentWillReceiveProps = async (props) => {
     this.setState({
       urlCamera: props.urlCamera,
     });
 
-    this.getPlc();
+    await this.getPlc();
   }
 
   updateIpMask = (e) => {
@@ -81,7 +81,7 @@ export default class Plc extends Component {
     });
   }
 
-  getPlc = () => {
+  getPlc = async () => {
     if (this.state.urlCamera === "") {
       return;
     }
@@ -91,7 +91,7 @@ export default class Plc extends Component {
     let ip2 = this.state.urlCamera.split(".")[2];
     let ip3 = this.state.urlCamera.split(".")[3];
 
-    axios
+    await axios
       .get(`http://${ip0}.${ip1}.${ip2}.${ip3}/plc`, { timeout: 3000 })
       .then((response) => {
         let data = response.data;
@@ -122,7 +122,7 @@ export default class Plc extends Component {
       });
   }
 
-  savePlc = () => {
+  savePlc = async () => {
     if (this.state.urlCamera === "") {
       Swal.fire({
         icon: "error",
@@ -144,7 +144,7 @@ export default class Plc extends Component {
     let ip2 = this.state.urlCamera.split(".")[2];
     let ip3 = this.state.urlCamera.split(".")[3];
 
-    axios
+    await axios
       .post(`http://${ip0}.${ip1}.${ip2}.${ip3}/plc`, plc, { timeout: 3000 })
       .then((response) => {
         Swal.fire({

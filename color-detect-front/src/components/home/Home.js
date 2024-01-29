@@ -195,7 +195,7 @@ export default class Home extends Component {
     this.getFrame();
   }
 
-  getColor = () => {
+  getColor = async () => {
     if (this.state.urlCamera === "") {
       return;
     }
@@ -205,7 +205,7 @@ export default class Home extends Component {
     let ip2 = this.state.urlCamera.split(".")[2];
     let ip3 = this.state.urlCamera.split(".")[3];
     
-    axios
+    await axios
       .get(`http://${ip0}.${ip1}.${ip2}.${ip3}/color`, { timeout: 3000 })
       .then((response) => {
         let data = response.data;
@@ -247,7 +247,7 @@ export default class Home extends Component {
       });
   }
 
-  saveColor = () => {
+  saveColor = async () => {
     if (this.state.newColormin === '' ) {
         Swal.fire({
             icon: "error",
@@ -275,7 +275,7 @@ export default class Home extends Component {
       colormax: corMax,
     };
 
-    axios
+    await axios
       .post(`${this.state.urlCamera}/color`, color, { timeout: 3000 })
       .then((response) => {
         Swal.fire({

@@ -213,8 +213,6 @@ class TarefaCaptura(Thread):
                     print('Ocorreu um erro ao inciar a câmera!')
                     self.cam_run = False
                     self.cap = cv.VideoCapture(0)
-                else:
-                    print('A câmera foi desligada!')
 
     def stop(self):
         self.cam_run = False
