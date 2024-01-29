@@ -139,13 +139,13 @@ export default class Plc extends Component {
       var_cam: `${this.state.db},${this.state.bit}`,
     };
 
-    let ip0 = this.state.urlCamera.split(".")[0];
+    let ip0 = this.state.urlCamera.split(".")[0].replace("http://", "");
     let ip1 = this.state.urlCamera.split(".")[1];
     let ip2 = this.state.urlCamera.split(".")[2];
     let ip3 = this.state.urlCamera.split(".")[3];
 
     axios
-      .post(`http://${ip0}.${ip1}.${ip2}.${ip3}/cam01/plc`, plc, { timeout: 3000 })
+      .post(`http://${ip0}.${ip1}.${ip2}.${ip3}/plc`, plc, { timeout: 3000 })
       .then((response) => {
         Swal.fire({
           icon: "success",
