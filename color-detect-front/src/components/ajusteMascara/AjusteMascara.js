@@ -76,13 +76,12 @@ export default class AjusteMascara extends Component {
         return;
     }
 
-    let ip0 = this.state.urlCamera.split(".")[0];
     let ip1 = this.state.urlCamera.split(".")[1];
     let ip2 = this.state.urlCamera.split(".")[2];
     let ip3 = this.state.urlCamera.split(".")[3];
 
     axios
-      .get(`http://${ip0}.${ip1}.${ip2}.${ip3}:4000/cam01/mask`, { timeout: 3000 })
+      .get(`http://${ip1}.${ip2}.${ip3}:4000/cam01/mask`, { timeout: 3000 })
       .then((response) => {
         console.log(response.data);
         let data = response.data;
