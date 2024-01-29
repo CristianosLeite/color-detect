@@ -142,7 +142,7 @@ export default class AjusteMascara extends Component {
     let ip3 = this.state.urlCamera.split(".")[3];
 
     await axios
-      .post(`http://${ip0}.${ip1}.${ip2}.${ip3}/cam01/mask`, mask, { timeout: 3000 })
+      .post(`http://${ip0}.${ip1}.${ip2}.${ip3}/mask`, mask, { timeout: 3000 })
       .then((response) => {
         Swal.fire({
           icon: "success",
