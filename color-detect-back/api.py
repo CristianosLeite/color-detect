@@ -22,7 +22,7 @@ def generate_frame(tfc_instance):
             print(f"Error generating frame: {e}")
             return False
 
-def get_local_ip_address(remote_host='127.0.0.1'):
+def get_local_ip_address(remote_host='8.8.8.8'):
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         s.connect((remote_host, 80))
