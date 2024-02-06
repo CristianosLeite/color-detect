@@ -35,13 +35,13 @@ Declare uma variavel db_credentials no arquivo `credentials.py` com as credencia
 Exemplo:
 
 ```bash
-    db_credentials = {
+db_credentials = {
     'DB_NAME': 'postgres',
     'DB_USER': 'postgres',
     'DB_PASSWORD': 'postgres',
     'DB_HOST': 'localhost',
     'DB_PORT': '5432'
-    }
+}
 ```
 
 Ou se preferir utilize variáveis de ambiente para armazenar as credenciais do banco de dados.
