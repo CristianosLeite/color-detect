@@ -22,7 +22,7 @@ git clone https://github.com/CristianosLeite/color-detect.git
 cd color-detect/color-detect-back
 pip install -r requirements.txt
 ```
-Este projeto foi desenvolvido utilizando o PostgreSQL como banco de dados. Após instalar e configurar o PostgreSQL, creie um arquivo com o nome `credentials.py`:
+Este projeto foi desenvolvido utilizando o PostgreSQL como banco de dados. Após instalar e configurar o PostgreSQL, crie um arquivo com o nome `credentials.py`:
 
 ```bash
 touch credentials.py
