@@ -93,7 +93,7 @@ def save_color_01():
 def update_color():
     colors = request.get_json()
     if colors:
-        db.save_colors(colors)
+        db.save_color(colors)
         print('Limite de cor atualizado com sucesso!')
         tfc01.update_color(colors)
         return jsonify({"message": "Limite de cor Atualizado com sucesso!"}), 200
@@ -101,7 +101,7 @@ def update_color():
         return jsonify({"error": "Nenhum dado foi informado na requisição."}), 400
 
 def get_color():
-    has_color = db.get_colors()
+    has_color = db.get_color()
     if has_color:
         if has_color and 'colormin' in has_color:
             tfc01.update_color(has_color)

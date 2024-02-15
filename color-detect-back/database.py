@@ -102,7 +102,7 @@ class Database:
         self.db.execute(query)
         return self.db.fetchone()
 
-    def get_colors(self):
+    def get_color(self):
         query = "SELECT * FROM public.colors_cam01 ORDER BY id DESC LIMIT 1"
         self.db.execute(query)
         return self.db.fetchone()
@@ -117,7 +117,7 @@ class Database:
         self.db.execute(query, (re.sub(r'\.0+(\d)', r'.\1', plc['ip']), plc['rack'], plc['slot'], plc['var_cam']))
         self.conn.commit()
 
-    def save_colors(self, colors):
+    def save_color(self, colors):
         query = "INSERT INTO public.colors_cam01 (colormin, colormax) VALUES (%s, %s) ON CONFLICT (id) DO UPDATE SET colormin = excluded.colormin, colormax = excluded.colormax;"
         self.db.execute(query, (colors['colormin'], colors['colormax']))
         self.conn.commit()
