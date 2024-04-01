@@ -28,16 +28,28 @@ export default class Plc extends Component {
       db: 0,
       bit: 0,
       urlCamera: "",
+      getPlcCalled: false,
     };
   }
 
-  componentWillReceiveProps = async (props) => {
-    this.setState({
-      urlCamera: props.urlCamera,
-    });
+  static getDerivedStateFromProps(props, state) {
+    if (props.urlCamera !== state.urlCamera) {
+        return {
+            urlCamera: props.urlCamera,
+            getPlcCalled: false, // Reset getPlcCalled quando urlCamera muda
+        };
+    }
 
-    await this.getPlc();
-  }
+    // Retornar null se a prop não mudou
+    return null;
+}
+
+async componentDidUpdate() {
+    if (this.state.urlCamera !== "" && !this.state.getPlcCalled) {
+        await this.getPlc();
+        this.setState({ getPlcCalled: true }); // Atualiza getPlcCalled para true depois de chamar getPlc
+    }
+}
 
   updateIpMask = (e) => {
     let ip = e.target.value;
@@ -81,6 +93,7 @@ export default class Plc extends Component {
     });
   }
 
+
   getPlc = async () => {
     if (this.state.urlCamera === "") {
       return;
@@ -96,6 +109,7 @@ export default class Plc extends Component {
       .then((response) => {
         let data = response.data;
         if (data) {
+          console.log(data);
           let [db, bit] = data.plc.var_cam.split(",");
 
           this.setState({

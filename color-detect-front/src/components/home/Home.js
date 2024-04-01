@@ -1,5 +1,4 @@
 import { Component } from "react";
-import axios from "axios";
 import Swal from "sweetalert2";
 
 import {
@@ -21,20 +20,20 @@ import {
   ContentCol03Linha02,
   TituloFuncao,
   HeaderFuncao,
+  ContentCol02Linha03,
 } from "./styles";
 
-import MostrarRgb from "../mostraRgb/MostraRgb";
 import AjusteMascara from "../ajusteMascara/AjusteMascara";
 import ConfigCamera from "../configCamera/configCamera";
 import Plc from "../plc/Plc";
+import axios from "axios";
+import MostrarRgb from "../mostraRgb/MostraRgb";
 
 import LogoUrl from "../../images/logo.png";
 
 export default class Home extends Component {
   constructor(props) {
     super(props);
-
-    this.contexto = {};
 
     this.state = {
       urlCamera: "",
@@ -44,10 +43,37 @@ export default class Home extends Component {
       corInicialMax: "255,255,255",
       newColormin: "",
       newColormax: "",
+      getColorsCalled: false,
     };
 
     this.urlFrame = this.state.urlCamera;
   }
+
+  drawImage = (img, x, y) => {
+    this.contexto.drawImage(img, x, y);
+  };
+
+  componentDidMount() {
+    this.contexto = this.canvasA.getContext("2d");
+  }
+
+  async componentDidUpdate() {
+    if (!this.state.getColorsCalled) {
+      await this.getColors();
+      this.setState({ getColorsCalled: true });
+    }
+  }
+
+  getFrame = async () => {
+    var img = new Image();
+    img.crossOrigin = "Anonymous";
+    img.src = this.state.urlCameraAux01;
+
+    img.onload = () => {
+      img.src = this.state.urlCameraAux01;
+      this.drawImage(img, 0, 0);
+    };
+  };
 
   rgb2hsv = (r, g, b) => {
     var computedH = 0;
@@ -102,21 +128,7 @@ export default class Home extends Component {
     computedS = ((maxRGB - minRGB) / maxRGB) * 100;
     computedV = maxRGB * 100;
     return [parseInt(computedH), parseInt(computedS), parseInt(computedV)];
-  }
-
-  getFrame = async () => {
-    var img = new Image();
-    img.crossOrigin = "Anonymous";
-
-    this.contexto = this.canvasA.getContext("2d");
-
-    img.src = this.state.urlCameraAux01;
-
-    img.onload = () => {
-      img.src = this.state.urlCameraAux01;
-      this.contexto.drawImage(img, 0, 0);
-    };
-  }
+  };
 
   getPixelColor = (e) => {
     e.preventDefault();
@@ -140,62 +152,53 @@ export default class Home extends Component {
         newColormax: cor,
       });
     }
-  }
+  };
 
-  startVideo = () => {
-    if (this.state.urlCamera === "") {
-      Swal.fire({
-        icon: "error",
-        title: "Não permitido!",
-        text: "Você precisa conectar um controlador antes de iniciar o vídeo!",
-      });
-      return;
+  updateIputs = (e) => {
+    switch (e.target.name) {
+      case "corInicialMin":
+        this.setState({ corInicialMin: e.target.value });
+        break;
+      case "corInicialMax":
+        this.setState({ corInicialMax: e.target.value });
+        break;
+      case "newColormin":
+        this.setState({ newColormin: e.target.value });
+        break;
+      case "newColormax":
+        this.setState({ newColormax: e.target.value });
+        break;
+      default:
+        break;
     }
-    this.setState({
-      urlCameraAux01: this.state.urlCameraAux02,
-    });
-
-    this.getFrame();
-  }
-
-  stopVideo = () => {
-    if (this.state.urlCamera === "") {
-      Swal.fire({
-        icon: "error",
-        title: "Não permitido!",
-        text: "Nenhum vídeo foi detectado!",
-      });
-      return;
-    }
-    this.setState({
-      urlCameraAux01: "",
-    });
-  }
+  };
 
   updateColormin = (newColor) => {
     this.setState({
       newColormin: newColor,
     });
-  }
+  };
 
   updateColormax = (newColor) => {
     this.setState({
       newColormax: newColor,
     });
-  }
+  };
 
-  updateUrlCamera = (urlCamera) => {
-    this.setState({
-      urlCamera: urlCamera,
-      urlCameraAux01: urlCamera,
-      urlCameraAux02: urlCamera,
-    });
+  newColor = async (cor) => {
+    try {
+      await axios.post(`${this.state.urlCamera}/colors`, { cor });
+      this.getColors();
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Erro",
+        text: "Erro ao atualizar a cor",
+      });
+    }
+  };
 
-    this.getColor();
-    this.getFrame();
-  }
-
-  getColor = async () => {
+  getColors = async () => {
     if (this.state.urlCamera === "") {
       return;
     }
@@ -204,7 +207,7 @@ export default class Home extends Component {
     let ip1 = this.state.urlCamera.split(".")[1];
     let ip2 = this.state.urlCamera.split(".")[2];
     let ip3 = this.state.urlCamera.split(".")[3];
-    
+
     await axios
       .get(`http://${ip0}.${ip1}.${ip2}.${ip3}/color`, { timeout: 3000 })
       .then((response) => {
@@ -224,16 +227,10 @@ export default class Home extends Component {
             newColormin: `${limitMin[0]},${sMin}%,${vMin}%`,
             newColormax: `${limitMax[0]},${sMax}%,${vMax}%`,
           });
-
-          Swal.fire({
-            icon: "success",
-            title: "Conectado.",
-            text: "Conectado ao controlador com sucesso!\n Inicie o vídeo para realizar a calibração.",
-          });
         }
       })
       .catch((error) => {
-        let message = "Ocorreu um erro ao carregar as cores.\nTente novamente.";
+        let message = `Ocorreu um erro ao carregar as cores.\nTente novamente. ${error}`;
         if (error.status === 400 || error.status === 500) {
           message = error.data.error;
         } else if (error.status === 404) {
@@ -245,18 +242,19 @@ export default class Home extends Component {
           text: message,
         });
       });
-  }
+  };
 
   saveColor = async () => {
-    if (this.state.newColormin === '' ) {
-        Swal.fire({
-            icon: "error",
-            title: "Não permitido!",
-            text: "É necessário conectar-se à um controlador para realizar esta ação.",
-        });
-        
-        return;
-    };
+    if (this.state.newColormin === "") {
+      Swal.fire({
+        icon: "error",
+        title: "Não permitido!",
+        text: "É necessário conectar-se à um controlador para realizar esta ação.",
+      });
+
+      return;
+    }
+    this.stopVideo();
     let hsvArrayMin = this.state.newColormin.split(",");
     let hMin = hsvArrayMin[0];
     let sMin = parseInt(parseInt(hsvArrayMin[1].replace("%", "")) * 2.55);
@@ -283,9 +281,10 @@ export default class Home extends Component {
           title: "Salvo.",
           text: response.data.message,
         });
+        this.startVideo();
       })
       .catch((error) => {
-        let message = "Ocorreu um erro ao salvar o limite de cores.\n Tente novamente.";
+        let message = `Ocorreu um erro ao salvar o limite de cores.\n Tente novamente. ${error}`;
         if (error.status === 400 || error.status === 500) {
           message = error.data.error;
         } else if (error.status === 404) {
@@ -297,7 +296,61 @@ export default class Home extends Component {
           text: message,
         });
       });
-  }
+  };
+
+  startVideo = () => {
+    if (this.state.urlCamera === "") {
+      Swal.fire({
+        icon: "error",
+        title: "Não permitido!",
+        text: "Você precisa conectar um controlador antes de iniciar o vídeo!",
+      });
+      return;
+    }
+    this.setState(
+      {
+        urlCameraAux01: this.state.urlCameraAux02,
+      },
+      () => {
+        this.getFrame();
+        this.getFrame();
+      }
+    );
+  };
+
+  stopVideo = () => {
+    if (this.state.urlCamera === "") {
+      Swal.fire({
+        icon: "error",
+        title: "Não permitido!",
+        text: "Nenhum vídeo foi detectado!",
+      });
+      return;
+    }
+    this.setState({
+      urlCameraAux01: "",
+    });
+  };
+
+  updateUrlCamera = async (urlCamera) => {
+    this.setState({
+      urlCamera: urlCamera,
+      urlCameraAux01: urlCamera,
+      urlCameraAux02: urlCamera,
+    });
+
+    Promise.all([
+      AjusteMascara.getDerivedStateFromProps(this.props, this.state),
+      Plc.getDerivedStateFromProps(this.props, this.state),
+      this.getFrame()
+    ]).then(() => {
+      Swal.fire({
+        icon: "success",
+        title: "Conectado.",
+        text: "Conectado ao controlador com sucesso!\n Inicie o vídeo para realizar a calibração.",
+      });
+    });
+  };
 
   render() {
     return (
@@ -311,18 +364,23 @@ export default class Home extends Component {
           <ContentCol01>
             <VisuVideo
               ref={(canvasA) => (this.canvasA = canvasA)}
-              onClick={this.getPixelColor}
+              onDoubleClick={this.getPixelColor}
               width="640px"
               height="480px"
             ></VisuVideo>
           </ContentCol01>
           <ContentCol02>
             <ContentCol02Linha01>
-              <HeaderFuncao>
-                <TituloFuncao>Limite de cores</TituloFuncao>
+            <HeaderFuncao>
+                <TituloFuncao>Vídeo</TituloFuncao>
               </HeaderFuncao>
               <ButtonGreen onClick={this.startVideo}>Iniciar vídeo</ButtonGreen>
               <ButtonBlue onClick={this.stopVideo}>Parar vídeo</ButtonBlue>
+            </ContentCol02Linha01>
+            <ContentCol02Linha01>
+              <HeaderFuncao>
+                <TituloFuncao>Limite de cores</TituloFuncao>
+              </HeaderFuncao>
               <MostrarRgb
                 title="Cor mínimo"
                 cor={this.state.corInicialMin}

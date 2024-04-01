@@ -109,3 +109,4 @@ if __name__ == '__main__':
     interface.show()
     threading.Thread(target=interface.get_status).start()
     qt.exec()
+    sys.exit()

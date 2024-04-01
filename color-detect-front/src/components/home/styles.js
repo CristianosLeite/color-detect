@@ -116,6 +116,21 @@ export const ContentCol02Linha02 = styled.div`
   border-radius: 5px;
   border-width: 4px;
   border-color: #00a54f;
+
+  margin-bottom: 2px;
+`;
+
+export const ContentCol02Linha03 = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+
+  align-items: center;
+
+  border-style: solid;
+  border-radius: 5px;
+  border-width: 4px;
+  border-color: #00a54f;
 `;
 
 export const ContentCol03Linha01 = styled.div`

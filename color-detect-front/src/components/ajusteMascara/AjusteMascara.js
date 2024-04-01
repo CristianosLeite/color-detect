@@ -14,6 +14,7 @@ import {
 } from "./styles";
 import axios from "axios";
 import Swal from "sweetalert2";
+import Home from "../home/Home";
 
 export default class AjusteMascara extends Component {
   constructor(props) {
@@ -29,15 +30,28 @@ export default class AjusteMascara extends Component {
       y3: 0,
       x4: 0,
       y4: 0,
+      getMaskCalled: false,
     };
   }
 
-  componentWillReceiveProps = async (props) => {
-    this.setState({
-      urlCamera: props.urlCamera,
-    });
+  static getDerivedStateFromProps(props, state) {
+    if (props.urlCamera !== state.urlCamera) {
+      console.log(state.urlCamera, props.urlCamera);
+      return {
+        urlCamera: props.urlCamera,
+        getMaskCalled: false, // Reset getMaskCalled quando urlCamera muda
+      };
+    }
 
-    await this.getMask();
+    // Retornar null se a prop não mudou
+    return null;
+  }
+
+  async componentDidUpdate() {
+    if (this.state.urlCamera !== "" && !this.state.getMaskCalled) {
+      await this.getMask();
+      this.setState({ getMaskCalled: true }); // Atualize getMaskCalled para true depois de chamar getMask
+    }
   }
 
   updateIputs = (e) => {
@@ -69,11 +83,11 @@ export default class AjusteMascara extends Component {
       default:
         break;
     }
-  }
+  };
 
   getMask = async () => {
-    if (this.state.urlCamera === '') {
-        return;
+    if (this.state.urlCamera === "") {
+      return;
     }
 
     let ip0 = this.state.urlCamera.split(".")[0].replace("http://", "");
@@ -88,14 +102,14 @@ export default class AjusteMascara extends Component {
         let data = response.data;
         if (data) {
           this.setState({
-            x1: parseInt(data.mask['mask'][0]),
-            y1: parseInt(data.mask['mask'][1]),
-            x2: parseInt(data.mask['mask'][2]),
-            y2: parseInt(data.mask['mask'][3]),
-            x3: parseInt(data.mask['mask'][4]),
-            y3: parseInt(data.mask['mask'][5]),
-            x4: parseInt(data.mask['mask'][6]),
-            y4: parseInt(data.mask['mask'][7]),
+            x1: parseInt(data.mask["mask"][0]),
+            y1: parseInt(data.mask["mask"][1]),
+            x2: parseInt(data.mask["mask"][2]),
+            y2: parseInt(data.mask["mask"][3]),
+            x3: parseInt(data.mask["mask"][4]),
+            y3: parseInt(data.mask["mask"][5]),
+            x4: parseInt(data.mask["mask"][6]),
+            y4: parseInt(data.mask["mask"][7]),
           });
         }
       })
@@ -112,18 +126,17 @@ export default class AjusteMascara extends Component {
           text: message,
         });
       });
-  }
+  };
 
   saveMask = async () => {
+    if (this.state.urlCamera === "") {
+      Swal.fire({
+        icon: "error",
+        title: "Não permitido!",
+        text: "É necessário conectar-se à um controlador para realizar esta ação.",
+      });
 
-    if (this.state.urlCamera === '') {
-        Swal.fire({
-            icon: 'error',
-            title: 'Não permitido!',
-            text: 'É necessário conectar-se à um controlador para realizar esta ação.'
-        });
-
-        return;
+      return;
     }
     let x1 = this.state.x1;
     let y1 = this.state.y1;
@@ -136,7 +149,7 @@ export default class AjusteMascara extends Component {
 
     let mask = { mask: `${x1},${y1},${x2},${y2},${x3},${y3},${x4},${y4}` };
 
-    let ip0 = this.state.urlCamera.split(".")[0].replace('http://', '')
+    let ip0 = this.state.urlCamera.split(".")[0].replace("http://", "");
     let ip1 = this.state.urlCamera.split(".")[1];
     let ip2 = this.state.urlCamera.split(".")[2];
     let ip3 = this.state.urlCamera.split(".")[3];
@@ -163,7 +176,7 @@ export default class AjusteMascara extends Component {
           text: message,
         });
       });
-  }
+  };
 
   render() {
     return (

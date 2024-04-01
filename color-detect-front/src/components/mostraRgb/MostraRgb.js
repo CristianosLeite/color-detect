@@ -24,23 +24,27 @@ export default class MostrarRgb extends Component {
     };
   }
 
-  componentWillReceiveProps = (props) => {
-    let hsv = props.cor;
+  static getDerivedStateFromProps(props, state) {
+    if (props.cor !== state.cor) {
+      let hsv = props.cor;
 
-    let arrayHsv = hsv.split(",");
+      let arrayHsv = hsv.split(",");
 
-    let h = parseInt(arrayHsv[0]);
-    let s = parseInt(arrayHsv[1]);
-    let v = parseInt(arrayHsv[2]);
+      let h = parseInt(arrayHsv[0]);
+      let s = parseInt(arrayHsv[1]);
+      let v = parseInt(arrayHsv[2]);
 
-    if (!this.state.habilitaEditarCor) {
-      this.setState({
-        cor: hsv,
-        h: h,
-        s: s,
-        v: v,
-      });
+      if (!state.habilitaEditarCor) {
+        return {
+          cor: hsv,
+          h: h,
+          s: s,
+          v: v,
+        };
+      }
     }
+
+    return null;
   }
 
   habilitaEdicao = (e) => {

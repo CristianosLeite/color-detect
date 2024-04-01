@@ -7,6 +7,14 @@ from sys import exit
 from waitress import serve
 
 app = Flask(__name__)
+
+@app.after_request
+def add_header(response):
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type,Authorization'
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    return response
+
 CORS(app)
 
 tfc01 = TarefaCaptura()
@@ -31,7 +39,7 @@ def get_local_ip_address(remote_host='8.8.8.8'):
         return ip_address
     except Exception as e:
         return None
-
+    
 @app.route('/cam01')
 def video_feed_01():
     return Response(generate_frame(tfc01), mimetype='multipart/x-mixed-replace; boundary=frame'), 200
@@ -89,6 +97,8 @@ def save_color_01():
         return update_color()
     elif request.method == 'GET':
         return get_color()
+    else:
+        return jsonify({"error": "Método não permitido"}), 405
 
 def update_color():
     colors = request.get_json()
@@ -102,10 +112,9 @@ def update_color():
 
 def get_color():
     has_color = db.get_colors()
-    if has_color:
-        if has_color and 'colormin' in has_color:
-            tfc01.update_color(has_color)
-            return jsonify({"color": has_color}), 200
+    if has_color and 'colormin' in has_color:
+        tfc01.update_color(has_color)
+        return jsonify({"color": has_color}), 200
     else:
         return jsonify({"error": "Limite de cor não cadastrado!"}), 404
 
@@ -138,7 +147,7 @@ def get_mask():
 
 if __name__ == '__main__':
     print('Server running on port 4000')
-    serve(app, host='0.0.0.0', port=4000, threads=2, asyncore_use_poll=True)
+    serve(app, host='0.0.0.0', port=4000, threads=1, asyncore_use_poll=False, asyncore_loop_timeout=1)
     db.close()
     print('Server stopped')
     tfc01.stop()
