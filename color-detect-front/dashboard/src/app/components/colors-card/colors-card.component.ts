@@ -12,8 +12,6 @@ import { FormControl } from '@angular/forms';
   styleUrl: './colors-card.component.scss',
 })
 export class ColorsCardComponent {
-  minColorBox = new FormControl(false);
-  maxColorBox = new FormControl(false);
   colorMax = new FormControl('#FFFFFF');
   colorMin = new FormControl('#FFFFFF');
   minColorH = new FormControl('255');

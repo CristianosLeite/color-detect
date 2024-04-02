@@ -8,7 +8,7 @@ export class SafePipe implements PipeTransform {
   transform(url: string) {
     return this.domSanitizer.bypassSecurityTrustResourceUrl(url);
   }
-} 
+}
 
 @Component({
   selector: 'app-canvas',
