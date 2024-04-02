@@ -25,6 +25,19 @@ import { ApiServiceService } from '../../services/api-service.service';
 })
 export class HomeComponent {
   ip: string = '';
+  statusController: boolean = false;
 
+  constructor(private apiService: ApiServiceService) {
+    this.apiService.statusControllerEvent.subscribe((status: boolean) => {
+      this.statusController = status;
+    });
+  }
 
+  startStream() {
+    this.apiService.startStream();
+  }
+
+  stopStream() {
+    this.apiService.stopStream();
+  }
 }

@@ -1,6 +1,7 @@
-import { Component, ViewChild, ElementRef, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Pipe, PipeTransform } from '@angular/core';
 import { DomSanitizer} from '@angular/platform-browser';
+import { ApiServiceService } from '../../services/api-service.service';
 
 @Pipe({ name: 'safe' })
 export class SafePipe implements PipeTransform {
@@ -19,11 +20,16 @@ export class SafePipe implements PipeTransform {
   styleUrl: './canvas.component.scss'
 })
 export class CanvasComponent {
-  @ViewChild('container', { static: true })
-  container!: ElementRef;
+
   @Input() url: string = '';
 
-  constructor(private safePipe: SafePipe) {
-    this.url = this.safePipe.transform(this.url) as string;
+  context: CanvasRenderingContext2D | null = null;
+
+  constructor(private safePipe: SafePipe, private apiService: ApiServiceService) {
+    this.apiService.urlEvent.subscribe((url: string) => {
+      this.url = url;
+      this.url = this.safePipe.transform(this.url) as string;
+    });
   }
+
 }

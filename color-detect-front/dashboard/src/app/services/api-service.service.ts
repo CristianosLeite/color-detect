@@ -1,8 +1,10 @@
-import { Injectable, EventEmitter, Output } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Color } from '../interfaces/color.interface';
-import Swal from 'sweetalert2';
+import { Mask } from '../interfaces/mask.interface';
+import Swal, { SweetAlertIcon } from 'sweetalert2';
+import { Plc } from '../interfaces/plc.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -12,9 +14,20 @@ export class ApiServiceService {
   endpoint = 'cam01/'
   controller = 'get_ip_address'
   color = 'color';
+  mask = 'mask';
+  plc = 'plc';
   url = this.baseUrl + this.endpoint;
+  statusController: boolean = false;
+  ip: string = '';
+  title = 'Erro!';
+  text = 'Não foi possível salvar a máscara!';
+  icon: SweetAlertIcon = 'error';
 
+  statusControllerEvent = new EventEmitter<boolean>();
   colorEvent = new EventEmitter<Color>();
+  maskEvent = new EventEmitter<Mask>();
+  plcEvent = new EventEmitter<any>();
+  urlEvent = new EventEmitter<string>();
 
   constructor(private http: HttpClient) { }
 
@@ -30,6 +43,16 @@ export class ApiServiceService {
         this.getColors().subscribe((data) => {
           this.colorEvent.emit(data);
         });
+        this.getMaskConfig().subscribe((data) => {
+          console.log(data);
+          this.maskEvent.emit(data);
+        });
+        this.getPlcConfig().subscribe((data) => {
+          this.plcEvent.emit(data);
+        });
+        this.ip = ip;
+        this.statusController = true;
+        this.statusControllerEvent.emit(true);
         return;
       }
 
@@ -39,17 +62,99 @@ export class ApiServiceService {
         icon: 'error',
         confirmButtonText: 'OK'
       });
+
+      this.statusController = false;
       return;
     });
+  }
+
+  startStream() {
+    if (!this.statusController) {
+      Swal.fire({
+        title: 'Erro!',
+        text: 'Conecte-se ao controlador antes de iniciar a transmissão!',
+        icon: 'error',
+        confirmButtonText: 'OK'
+      });
+      return;
+    }
+    this.http.get<any>(this.url + this.controller).subscribe(() => {
+      this.urlEvent.emit(`http://${this.ip}:4000/cam01`);
+    });
+  }
+
+  stopStream() {
+    if (!this.statusController) {
+      Swal.fire({
+        title: 'Erro!',
+        text: 'Nenum vídeo conectado!',
+        icon: 'error',
+        confirmButtonText: 'OK'
+      });
+      return;
+    }
+    this.urlEvent.emit('');
   }
 
   public getColors(): Observable<Color> {
     return this.http.get<Color>(this.url + this.color);
   }
 
-  public updateColor(color: Color) {
-    this.http.post<any>(this.url + this.color, color).subscribe((data) => {
-      this.colorEvent.emit(data);
+  public saveColors(data: Color) {
+    this.http.post<Response>(this.url + this.color, data.color).subscribe((data) => {
+        this.text = data.statusText;
+
+        if (data.status === 200) {
+            this.title = 'Sucesso!';
+            this.icon = 'success';
+        } else {
+            this.title = 'Erro!';
+            this.text = 'Não foi possível salvar as cores!';
+            this.icon = 'error';
+        }
+
+        Swal.fire({
+            title: this.title,
+            text: this.text,
+            icon: this.icon,
+            confirmButtonText: 'OK'
+        });
+    });
+  }
+
+  public getMaskConfig() {
+    return this.http.get<Mask>(this.url + this.mask);
+  }
+
+  public saveMask(data: Mask) {
+    this.http.post<Response>(this.url + this.mask, data['mask']).subscribe((data) => {
+        this.text = data.statusText;
+
+        if (data.status === 200) {
+            this.title = 'Sucesso!';
+            this.icon = 'success';
+        } else {
+            this.title = 'Erro!';
+            this.text = 'Não foi possível salvar a máscara!';
+            this.icon = 'error';
+        }
+
+        Swal.fire({
+            title: this.title,
+            text: this.text,
+            icon: this.icon,
+            confirmButtonText: 'OK'
+        });
+    });
+  }
+
+  public getPlcConfig() {
+    return this.http.get<Plc>(this.url + this.plc);
+  }
+
+  public updatePlcConfig(plc: Plc) {
+    this.http.post<Plc>(this.url + this.plc, plc).subscribe((data) => {
+      console.log(data);
     });
   }
 }

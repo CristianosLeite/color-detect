@@ -6,31 +6,31 @@
         <div class="row">
             <div class="column">
                 <label for="1x">1x:</label>
-                <input type="number" id="1x" name="1x" min="0" max="100" step="1" />
+                <input type="number" id="1x" name="1x" min="0" max="100" step="1" [formControl]="x1"/>
                 <label for="1y">1y:</label>
-                <input type="number" id="1y" name="1y" min="0" max="100" step="1" />
+                <input type="number" id="1y" name="1y" min="0" max="100" step="1" [formControl]="y2"/>
             </div>
             <div class="column">
                 <label for="2x">2x:</label>
-                <input type="number" id="2x" name="2x" min="0" max="100" step="1"  />
+                <input type="number" id="2x" name="2x" min="0" max="100" step="1" [formControl]="x2"/>
                 <label for="2y">2y:</label>
-                <input type="number" id="2y" name="2y" min="0" max="100" step="1" />
+                <input type="number" id="2y" name="2y" min="0" max="100" step="1" [formControl]="y2"/>
             </div>
         </div>
         <div class="row">
             <div class="column">
                 <label for="3x">3x:</label>
-                <input type="number" id="3x" name="3x" min="0" max="100" step="1"/>
+                <input type="number" id="3x" name="3x" min="0" max="100" step="1" [formControl]="x3"/>
                 <label for="3y">3y:</label>
-                <input type="number" id="3y" name="3y" min="0" max="100" step="1" />
+                <input type="number" id="3y" name="3y" min="0" max="100" step="1" [formControl]="y3"/>
             </div>
             <div class="column">
                 <label for="4x">4x:</label>
-                <input type="number" id="4x" name="4x" min="0" max="100" step="1" />
+                <input type="number" id="4x" name="4x" min="0" max="100" step="1" [formControl]="x4"/>
                 <label for="4y">4y:</label>
-                <input type="number" id="4y" name="4y" min="0" max="100" step="1" />
+                <input type="number" id="4y" name="4y" min="0" max="100" step="1" [formControl]="y4"/>
             </div>
         </div>
-        <button class="btnBlue" title="Salvar">Atualizar Máscara</button>
+        <button class="btnBlue" title="Salvar" (click)="saveMask()" >Atualizar Máscara</button>
     </div>
 </div>

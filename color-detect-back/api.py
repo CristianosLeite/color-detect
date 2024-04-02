@@ -55,7 +55,7 @@ def get_plc_status_01():
     if ip_address:
         return jsonify({'conectado': tfc01.has_plc, 'ip_address': ip_address}), 200
     else:
-        return jsonify({'error': 'IP not found'}), 400
+        return jsonify({'statusText': 'IP not found'}), 400
 
 @app.route('/cam01/get_ip_address', methods=['POST', 'GET'])
 def get_ip_address():
@@ -63,7 +63,7 @@ def get_ip_address():
     if ip_address:
         return jsonify({'ip_address': ip_address}), 200
     else:
-        return jsonify({'error': 'IP not found'}), 400
+        return jsonify({'statusText': 'IP not found'}), 400
 
 @app.route('/cam01/plc', methods=['POST', 'GET'])
 def connect_plc_01():
@@ -78,9 +78,9 @@ def update_plc():
         db.save_plc(plc)
         print('PLC atualizado com sucesso!')
         conn_plc = tfc01.update_plc(plc)
-        return jsonify({"message": "PLC Atualizado com sucesso!", 'conectado': conn_plc}), 200
+        return jsonify({"statusText": "PLC Atualizado com sucesso!", 'conectado': conn_plc}), 200
     else:
-        return jsonify({"error": "Nenhum dado foi informado na requisição."}), 400
+        return jsonify({"statusText": "Nenhum dado foi informado na requisição."}), 400
 
 def get_plc():
     has_plc = db.get_plc()
@@ -89,7 +89,7 @@ def get_plc():
         conn_plc = tfc01.update_plc(has_plc)
         return jsonify({"plc": plc_api, 'conectado': conn_plc}), 200
     else:
-        return jsonify({"error": "PLC não cadastrado!"}), 404
+        return jsonify({"statusText": "PLC não cadastrado!"}), 404
 
 @app.route('/cam01/color', methods=['POST', 'GET'])
 def save_color_01():
@@ -98,7 +98,7 @@ def save_color_01():
     elif request.method == 'GET':
         return get_color()
     else:
-        return jsonify({"error": "Método não permitido"}), 405
+        return jsonify({"statusText": "Método não permitido"}), 405
 
 def update_color():
     colors = request.get_json()
@@ -106,9 +106,9 @@ def update_color():
         db.save_colors(colors)
         print('Limite de cor atualizado com sucesso!')
         tfc01.update_color(colors)
-        return jsonify({"message": "Limite de cor Atualizado com sucesso!"}), 200
+        return jsonify({"statusText": "Limite de cor Atualizado com sucesso!", "status": 200})
     else:
-        return jsonify({"error": "Nenhum dado foi informado na requisição."}), 400
+        return jsonify({"statusText": "Nenhum dado foi informado na requisição.", "status": 400})
 
 def get_color():
     has_color = db.get_colors()
@@ -116,7 +116,7 @@ def get_color():
         tfc01.update_color(has_color)
         return jsonify({"color": has_color}), 200
     else:
-        return jsonify({"error": "Limite de cor não cadastrado!"}), 404
+        return jsonify({"statusText": "Limite de cor não cadastrado!"}), 404
 
 @app.route('/cam01/mask', methods=['POST', 'GET'])
 def save_mask_01():
@@ -128,12 +128,12 @@ def save_mask_01():
 def update_mask():
     masks = request.get_json()
     if masks and 'mask' in masks:
-        db.save_mask(masks['mask'])
+        db.save_mask(f"{masks['mask'][0]},{masks['mask'][1]},{masks['mask'][2]},{masks['mask'][3]},{masks['mask'][4]},{masks['mask'][5]},{masks['mask'][6]},{masks['mask'][7]}")
         print('Máscara atualizada com sucesso!')
-        tfc01.update_mask(masks['mask'])
-        return jsonify({"message": "Máscara Atualizada com sucesso!"}), 200
+        tfc01.update_mask([masks['mask']])
+        return jsonify({"statusText": "Máscara Atualizada com sucesso!", "status": 200})
     else:
-        return jsonify({"error": "Nenhum dado foi informado na requisição."}), 400
+        return jsonify({"statusText": "Nenhum dado foi informado na requisição.", "status": 400})
 
 def get_mask():
     has_mask = db.get_mask()
@@ -143,7 +143,7 @@ def get_mask():
             tfc01.update_mask(has_mask)
             return jsonify({"mask": has_mask}), 200
     else:
-        return jsonify({"error": "Máscara não cadastrada!"}), 404
+        return jsonify({"statusText": "Máscara não cadastrada!"}), 404
 
 if __name__ == '__main__':
     print('Server running on port 4000')

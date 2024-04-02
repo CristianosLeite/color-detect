@@ -90,7 +90,7 @@ export class ColorsCardComponent {
 
   private componentToHex(c: number) {
     let hex = c.toString(16);
-    return hex.length == 1 ? '0' + hex : hex;
+    return hex.length === 1 ? '0' + hex : hex;
   }
 
   convertRGBToColor(rgb: string) {
@@ -104,5 +104,24 @@ export class ColorsCardComponent {
       this.componentToHex(g) +
       this.componentToHex(b)
     );
+  }
+
+  saveColors() {
+    this.apiService.saveColors({
+      color: {
+        colormin:
+          this.minColorH.value +
+          ',' +
+          this.minColorS.value +
+          ',' +
+          this.minColorV.value,
+        colormax:
+          this.maxColorH.value +
+          ',' +
+          this.maxColorS.value +
+          ',' +
+          this.maxColorV.value,
+      },
+    });
   }
 }
