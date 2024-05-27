@@ -20,7 +20,7 @@ export class ApiServiceService {
   statusController: boolean = false;
   ip: string = '';
   title = 'Erro!';
-  text = 'Não foi possível salvar a máscara!';
+  text = 'Ocorreu um erro inesperado!';
   icon: SweetAlertIcon = 'error';
 
   statusControllerEvent = new EventEmitter<boolean>();
@@ -44,7 +44,6 @@ export class ApiServiceService {
           this.colorEvent.emit(data);
         });
         this.getMaskConfig().subscribe((data) => {
-          console.log(data);
           this.maskEvent.emit(data);
         });
         this.getPlcConfig().subscribe((data) => {
@@ -102,23 +101,22 @@ export class ApiServiceService {
 
   public saveColors(data: Color) {
     this.http.post<Response>(this.url + this.color, data.color).subscribe((data) => {
-        this.text = data.statusText;
+      this.text = data.statusText;
 
-        if (data.status === 200) {
-            this.title = 'Sucesso!';
-            this.icon = 'success';
-        } else {
-            this.title = 'Erro!';
-            this.text = 'Não foi possível salvar as cores!';
-            this.icon = 'error';
-        }
+      if (data.status === 200) {
+        this.title = 'Sucesso!';
+        this.icon = 'success';
+      } else {
+        this.title = 'Erro!';
+        this.icon = 'error';
+      }
 
-        Swal.fire({
-            title: this.title,
-            text: this.text,
-            icon: this.icon,
-            confirmButtonText: 'OK'
-        });
+      Swal.fire({
+        title: this.title,
+        text: this.text,
+        icon: this.icon,
+        confirmButtonText: 'OK'
+      });
     });
   }
 
@@ -128,23 +126,22 @@ export class ApiServiceService {
 
   public saveMask(data: Mask) {
     this.http.post<Response>(this.url + this.mask, data['mask']).subscribe((data) => {
-        this.text = data.statusText;
+      this.text = data.statusText;
 
-        if (data.status === 200) {
-            this.title = 'Sucesso!';
-            this.icon = 'success';
-        } else {
-            this.title = 'Erro!';
-            this.text = 'Não foi possível salvar a máscara!';
-            this.icon = 'error';
-        }
+      if (data.status === 200) {
+        this.title = 'Sucesso!';
+        this.icon = 'success';
+      } else {
+        this.title = 'Erro!';
+        this.icon = 'error';
+      }
 
-        Swal.fire({
-            title: this.title,
-            text: this.text,
-            icon: this.icon,
-            confirmButtonText: 'OK'
-        });
+      Swal.fire({
+        title: this.title,
+        text: this.text,
+        icon: this.icon,
+        confirmButtonText: 'OK'
+      });
     });
   }
 
@@ -152,9 +149,25 @@ export class ApiServiceService {
     return this.http.get<Plc>(this.url + this.plc);
   }
 
-  public updatePlcConfig(plc: Plc) {
-    this.http.post<Plc>(this.url + this.plc, plc).subscribe((data) => {
+  public updatePlcConfig(plc: Plc['plc']) {
+    this.http.post<Response>(this.url + this.plc, plc).subscribe((data) => {
       console.log(data);
+      this.text = data.statusText;
+
+      if (data.status === 200) {
+        this.title = 'Sucesso!';
+        this.icon = 'success';
+      } else {
+        this.title = 'Erro!';
+        this.icon = 'error';
+      }
+
+      Swal.fire({
+        title: this.title,
+        text: this.text,
+        icon: this.icon,
+        confirmButtonText: 'OK'
+      });
     });
   }
 }

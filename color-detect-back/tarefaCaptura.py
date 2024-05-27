@@ -2,6 +2,7 @@ import os
 import cv2 as cv
 import numpy as np
 import snap7
+import colorsys
 
 from flask import Flask
 from threading import Thread
@@ -19,7 +20,7 @@ class TarefaCaptura(Thread):
 
         self.s7 = snap7.client.Client()
 
-        self.cap = cv.VideoCapture(0)
+        self.cap = cv.VideoCapture(1)
         self.video = None
         self.cam_run = False
 
@@ -45,24 +46,17 @@ class TarefaCaptura(Thread):
         self.mask = self.config_mask()
 
     def rgb_to_hsv(self, r, g, b):
-        r, g, b = r / 255.0, g / 255.0, b / 255.0
-        mx = max(r, g, b)
-        mn = min(r, g, b)
-        df = mx - mn
-        if mx == mn:
-            h = 0
-        elif mx == r:
-            h = (60 * ((g - b) / df) + 360) % 360
-        elif mx == g:
-            h = (60 * ((b - r) / df) + 120) % 360
-        elif mx == b:
-            h = (60 * ((r - g) / df) + 240) % 360
-        if mx == 0:
-            s = 0
-        else:
-            s = (df / mx) * 100
-        v = mx * 100
-        return int(h), int(s), int(v)
+        r = float(r) / 255.0
+        g = float(g) / 255.0
+        b = float(b) / 255.0
+
+        h, s, v = colorsys.rgb_to_hsv(r, g, b)
+        h *= 360
+        s *= 100
+        v *= 100
+
+        print(h, s, v)
+        return int(h / 2), int(s), int(v)
 
     def config_lower_color(self):
         lower_color = np.array([31, 105, 68], np.uint8)
@@ -72,19 +66,44 @@ class TarefaCaptura(Thread):
         upper_color = np.array([57, 240, 240], np.uint8)
         return upper_color
 
+    def order_range(self, lower_color, upper_color):
+        n_lower_color = [lower_color[0], lower_color[1], lower_color[2]]
+        n_upper_color = [upper_color[0], upper_color[1], upper_color[2]]
+        if lower_color[0] > upper_color[0]:
+            n_lower_color[0] = upper_color[0]
+            n_upper_color[0] = lower_color[0]
+        if lower_color[1] > upper_color[1]:
+            n_lower_color[1] = upper_color[1]
+            n_upper_color[1] = lower_color[1]
+        if lower_color[2] > upper_color[2]:
+            n_lower_color[2] = upper_color[2]
+            n_upper_color[2] = lower_color[2]
+        return n_lower_color, n_upper_color
+    
+    def adjust_range(self, color, percentage):
+        return tuple(int(c * (1 + percentage / 100)) for c in color)
+
     def update_color(self, colors):
         if colors:
             if colors['colormin'] == '' or colors['colormax'] == '':
                 self.lower_color = self.config_lower_color()
                 self.upper_color = self.config_upper_color()
+                print('Cores padrão configuradas')
             else:
                 lower_color = colors['colormin'].split(',')
-                lower_color_array = [int(int(lower_color[0])/2), int(lower_color[1]), int(lower_color[2])]
-                self.lower_color = np.array(lower_color_array)
-
                 upper_color = colors['colormax'].split(',')
-                upper_color_array = [int(int(upper_color[0])/2), int(upper_color[1]), int(upper_color[2])]
+
+                lower_color = self.adjust_range((int(lower_color[0]), int(lower_color[1]), int(lower_color[2])), -25)
+                upper_color = self.adjust_range((int(upper_color[0]), int(upper_color[1]), int(upper_color[2])), 25)
+
+                lower_color_array, upper_color_array = self.order_range(
+                    self.rgb_to_hsv(lower_color[0], lower_color[1], lower_color[2]),
+                    self.rgb_to_hsv(upper_color[0], upper_color[1], upper_color[2])
+                )
+                self.lower_color = np.array(lower_color_array)
+                print(lower_color_array)
                 self.upper_color = np.array(upper_color_array)
+                print(upper_color_array)
 
     def gen(self):
         ret, jpeg = cv.imencode('.jpg', self.video)
@@ -92,8 +111,8 @@ class TarefaCaptura(Thread):
     
     def load_mask(self, mask):
         if mask and 'mask' in mask and mask['mask'] is not None:
-            self.array_mask = [int(value) for value in mask['mask']]
-            self.mask_pos = [(self.array_mask[i], self.array_mask[i+1]) for i in range(0, len(self.array_mask), 2)]
+            self.array_mask = [int(value) if value else 0 for value in mask['mask']]
+            self.mask_pos = [(self.array_mask[i], self.array_mask[i+1]) for i in range(0, len(self.array_mask)-1, 2)]
             self.mask = self.config_mask()
             return self.array_mask
         return False
@@ -158,7 +177,7 @@ class TarefaCaptura(Thread):
             )
             print('PLC connected')
         except Exception as e:
-            print(f'Error connecting to PLC: {e}')
+            print(f'Erro de conexão com PLC: {e}')
 
     def reconnect_to_plc(self):
         try:
@@ -168,7 +187,7 @@ class TarefaCaptura(Thread):
             self.connect_to_plc()
             return True
         except Exception as e:
-            print(f'Error reconnecting to PLC: {e}')
+            print(f'Erro de conexão com PLC: {e}')
             return False
 
     def run(self):
@@ -179,6 +198,7 @@ class TarefaCaptura(Thread):
                 self.cam_run = True
                 inspection_mask = cv.bitwise_and(frame, frame, mask=self.mask)
                 hsv = cv.cvtColor(inspection_mask, cv.COLOR_BGR2HSV)
+                #[63, 81, 64]
                 mask_green = cv.inRange(hsv, self.lower_color, self.upper_color)
                 kernal = np.ones((5, 5), "uint8")
                 mask_green = cv.dilate(mask_green, kernal)

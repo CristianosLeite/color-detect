@@ -46,24 +46,24 @@ def video_feed_01():
 
 @app.route('/cam01/get_status_run', methods=['POST', 'GET'])
 def get_status_run_01():
-    return jsonify({'run': tfc01.cam_run}), 200
+    return jsonify({'run': tfc01.cam_run, 'status': 200})
 
 @app.route('/cam01/get_plc_status', methods=['POST', 'GET'])
 def get_plc_status_01():
     tfc01.update_plc(db.get_plc())
     ip_address = get_local_ip_address(tfc01.plc['ip'])
     if ip_address:
-        return jsonify({'conectado': tfc01.has_plc, 'ip_address': ip_address}), 200
+        return jsonify({'conectado': tfc01.has_plc, 'ip_address': ip_address, 'status': 200})
     else:
-        return jsonify({'statusText': 'IP not found'}), 400
+        return jsonify({'statusText': 'Endereço IP não encontrado', 'status': 200})
 
 @app.route('/cam01/get_ip_address', methods=['POST', 'GET'])
 def get_ip_address():
     ip_address = get_local_ip_address()
     if ip_address:
-        return jsonify({'ip_address': ip_address}), 200
+        return jsonify({'ip_address': ip_address, 'status': 200})
     else:
-        return jsonify({'statusText': 'IP not found'}), 400
+        return jsonify({'statusText': 'Endereço IP não encontrado', 'status': 200})
 
 @app.route('/cam01/plc', methods=['POST', 'GET'])
 def connect_plc_01():
@@ -78,18 +78,18 @@ def update_plc():
         db.save_plc(plc)
         print('PLC atualizado com sucesso!')
         conn_plc = tfc01.update_plc(plc)
-        return jsonify({"statusText": "PLC Atualizado com sucesso!", 'conectado': conn_plc}), 200
+        return jsonify({"statusText": "PLC Atualizado com sucesso!", 'conectado': conn_plc, 'status': 200})
     else:
-        return jsonify({"statusText": "Nenhum dado foi informado na requisição."}), 400
+        return jsonify({"statusText": "Nenhum dado foi informado na requisição.", 'status': 400})
 
 def get_plc():
     has_plc = db.get_plc()
     if has_plc:
         plc_api = {key: has_plc[key] for key in ['ip', 'rack', 'slot', 'var_cam']}
         conn_plc = tfc01.update_plc(has_plc)
-        return jsonify({"plc": plc_api, 'conectado': conn_plc}), 200
+        return jsonify({"plc": plc_api, 'conectado': conn_plc, 'status': 200})
     else:
-        return jsonify({"statusText": "PLC não cadastrado!"}), 404
+        return jsonify({"statusText": "PLC não cadastrado!", 'status': 404})
 
 @app.route('/cam01/color', methods=['POST', 'GET'])
 def save_color_01():
@@ -98,7 +98,7 @@ def save_color_01():
     elif request.method == 'GET':
         return get_color()
     else:
-        return jsonify({"statusText": "Método não permitido"}), 405
+        return jsonify({"statusText": "Método não permitido", 'status': 405})
 
 def update_color():
     colors = request.get_json()
@@ -114,9 +114,9 @@ def get_color():
     has_color = db.get_colors()
     if has_color and 'colormin' in has_color:
         tfc01.update_color(has_color)
-        return jsonify({"color": has_color}), 200
+        return jsonify({"color": has_color, 'status': 200})
     else:
-        return jsonify({"statusText": "Limite de cor não cadastrado!"}), 404
+        return jsonify({"statusText": "Limite de cor não cadastrado!", 'status': 404})
 
 @app.route('/cam01/mask', methods=['POST', 'GET'])
 def save_mask_01():
@@ -141,9 +141,9 @@ def get_mask():
         if has_mask and 'mask' in has_mask:
             has_mask['mask'] = has_mask['mask'].split(',')
             tfc01.update_mask(has_mask)
-            return jsonify({"mask": has_mask}), 200
+            return jsonify({"mask": has_mask, 'status': 200})
     else:
-        return jsonify({"statusText": "Máscara não cadastrada!"}), 404
+        return jsonify({"statusText": "Máscara não cadastrada!", 'status': 404})
 
 if __name__ == '__main__':
     print('Server running on port 4000')

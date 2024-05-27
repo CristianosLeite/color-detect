@@ -39,6 +39,12 @@
         opacity: 1;
         }
     }
+    &:active {
+        cursor: crosshair;
+        .canvas__overlay {
+        opacity: 0;
+        }
+    }
 }
 
 @media screen and (max-width: 768px) {
@@ -46,4 +52,14 @@
     scale: 0.6;
     margin-left: -142px;
   }
+}
+
+// Draw mask
+@keyframes drawMask {
+    0% {
+        stroke-dashoffset: 1000;
+    }
+    100% {
+        stroke-dashoffset: 0;
+    }
 }

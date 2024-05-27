@@ -94,7 +94,6 @@ export class ColorsCardComponent {
   }
 
   convertRGBToColor(rgb: string) {
-    console.log(rgb);
     let r = parseInt(rgb.split(',')[0]);
     let g = parseInt(rgb.split(',')[1]);
     let b = parseInt(rgb.split(',')[2]);

@@ -1,5 +1,5 @@
 export interface Plc {
-  conectado: boolean;
+  conectado?: boolean;
   plc: {
     ip: string;
     rack: string;

@@ -18,6 +18,6 @@
         <label for="start">Bit:</label>
         <input type="number" id="bit" name="bit" min="0" max="9999" [formControl]="bit"/>
     </div>
-    <button class="btnBlue" title="Salvar">Salvar PLC</button>
+    <button class="btnBlue" title="Salvar" (click)="updatePlc()">Salvar PLC</button>
   </div>
 </div>

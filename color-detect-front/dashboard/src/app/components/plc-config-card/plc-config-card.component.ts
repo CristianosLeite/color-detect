@@ -24,11 +24,24 @@ export class PlcConfigCardComponent {
     });
   }
 
-  private setPlc(data: Plc) {
+  public setPlc(data: Plc) {
     this.ip.setValue(data.plc.ip);
     this.rack.setValue(data.plc.rack);
     this.slot.setValue(data.plc.slot);
     this.db.setValue(data.plc.var_cam.split(',')[0]);
     this.bit.setValue(data.plc.var_cam.split(',')[1]);
+  }
+
+  public updatePlc() {
+    const plc: Plc = {
+      plc: {
+        ip: this.ip.value!,
+        rack: this.rack.value!,
+        slot: this.slot.value!,
+        var_cam: `${this.db.value},${this.bit.value}`
+      }
+    };
+
+    this.apiService.updatePlcConfig(plc.plc);
   }
 }
