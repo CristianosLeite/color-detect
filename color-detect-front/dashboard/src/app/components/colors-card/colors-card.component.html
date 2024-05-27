@@ -7,24 +7,24 @@
             <label for="minColor">Cor mínima</label>
             <div class="row">
                 <input type="color" class="color" name="colorMin" [formControl]="colorMin" (ngModelChange)="changeColorMin($event)" >
-                <label>H</label>
-                <input type="number" id="minColorH" name="minColorH" min="0" max="360" step="1" [formControl]="minColorH"/>
-                <label>S</label>
-                <input type="number" id="minColorS" name="minColorS" min="0" max="255" step="1" [formControl]="minColorS"/>
-                <label>V</label>
-                <input type="number" id="minColorV" name="minColorV" min="0" max="255" step="1" [formControl]="minColorV"/>
+                <label>R</label>
+                <input type="number" id="minColorH" name="minColorH" min="0" max="360" step="1" [formControl]="minColorR"/>
+                <label>G</label>
+                <input type="number" id="minColorS" name="minColorS" min="0" max="255" step="1" [formControl]="minColorG"/>
+                <label>B</label>
+                <input type="number" id="minColorV" name="minColorV" min="0" max="255" step="1" [formControl]="minColorB"/>
             </div>
         </div>
         <div class="maxColor">
             <label for="maxColor">Cor máxima</label>
             <div class="row">
                 <input type="color" class="color" name="ColorMax" [formControl]="colorMax" (ngModelChange)="changeColorMax($event)" >
-                <label>H</label>
-                <input type="number" id="maxColorH" name="maxColorH" min="0" max="360" step="1" [formControl]="maxColorH"/>
-                <label>S</label>
-                <input type="number" id="maxColorS" name="maxColorS" min="0" max="255" step="1" [formControl]="maxColorS"/>
-                <label>V</label>
-                <input type="number" id="maxColorV" name="maxColorV" min="0" max="255" step="1" [formControl]="maxColorV"/>
+                <label>R</label>
+                <input type="number" id="maxColorH" name="maxColorH" min="0" max="360" step="1" [formControl]="maxColorR"/>
+                <label>G</label>
+                <input type="number" id="maxColorS" name="maxColorS" min="0" max="255" step="1" [formControl]="maxColorG"/>
+                <label>B</label>
+                <input type="number" id="maxColorV" name="maxColorV" min="0" max="255" step="1" [formControl]="maxColorB"/>
             </div>
         </div>
         <button class="btnBlue" title="Salvar" (click)="saveColors()" >Salvar</button>

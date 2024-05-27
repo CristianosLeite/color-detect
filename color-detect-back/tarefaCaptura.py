@@ -46,17 +46,14 @@ class TarefaCaptura(Thread):
         self.mask = self.config_mask()
 
     def rgb_to_hsv(self, r, g, b):
-        r = float(r) / 255.0
-        g = float(g) / 255.0
-        b = float(b) / 255.0
-
+        r, g, b = float(r) / 255.0, float(g) / 255.0, float(b) / 255.0
         h, s, v = colorsys.rgb_to_hsv(r, g, b)
-        h *= 360
-        s *= 100
-        v *= 100
 
-        print(h, s, v)
-        return int(h / 2), int(s), int(v)
+        h = h * 360
+        s = s * 100
+        v = v * 100
+
+        return int(h), int(s), int(v)
 
     def config_lower_color(self):
         lower_color = np.array([31, 105, 68], np.uint8)
@@ -69,6 +66,7 @@ class TarefaCaptura(Thread):
     def order_range(self, lower_color, upper_color):
         n_lower_color = [lower_color[0], lower_color[1], lower_color[2]]
         n_upper_color = [upper_color[0], upper_color[1], upper_color[2]]
+
         if lower_color[0] > upper_color[0]:
             n_lower_color[0] = upper_color[0]
             n_upper_color[0] = lower_color[0]
@@ -78,10 +76,8 @@ class TarefaCaptura(Thread):
         if lower_color[2] > upper_color[2]:
             n_lower_color[2] = upper_color[2]
             n_upper_color[2] = lower_color[2]
+
         return n_lower_color, n_upper_color
-    
-    def adjust_range(self, color, percentage):
-        return tuple(int(c * (1 + percentage / 100)) for c in color)
 
     def update_color(self, colors):
         if colors:
@@ -93,17 +89,18 @@ class TarefaCaptura(Thread):
                 lower_color = colors['colormin'].split(',')
                 upper_color = colors['colormax'].split(',')
 
-                lower_color = self.adjust_range((int(lower_color[0]), int(lower_color[1]), int(lower_color[2])), -25)
-                upper_color = self.adjust_range((int(upper_color[0]), int(upper_color[1]), int(upper_color[2])), 25)
-
                 lower_color_array, upper_color_array = self.order_range(
                     self.rgb_to_hsv(lower_color[0], lower_color[1], lower_color[2]),
                     self.rgb_to_hsv(upper_color[0], upper_color[1], upper_color[2])
                 )
+
+                lower_color_array = [int(lower_color_array[0] / 2), int(lower_color_array[1] * 1.75), int(lower_color_array[2] * 1.75)]
+                upper_color_array = [int(upper_color_array[0] / 2), int(upper_color_array[1] * 2.55), int(upper_color_array[2] * 2.55)]
+
                 self.lower_color = np.array(lower_color_array)
-                print(lower_color_array)
+                print("lower: ", lower_color_array)
                 self.upper_color = np.array(upper_color_array)
-                print(upper_color_array)
+                print("upper: ", upper_color_array)
 
     def gen(self):
         ret, jpeg = cv.imencode('.jpg', self.video)
@@ -198,7 +195,8 @@ class TarefaCaptura(Thread):
                 self.cam_run = True
                 inspection_mask = cv.bitwise_and(frame, frame, mask=self.mask)
                 hsv = cv.cvtColor(inspection_mask, cv.COLOR_BGR2HSV)
-                #[63, 81, 64]
+                # cv.inRange(hsv, np.array([59, 127, 84]), np.array([69, 178, 135]))
+                # cv.inRange(hsv, self.lower_color, self.upper_color)
                 mask_green = cv.inRange(hsv, self.lower_color, self.upper_color)
                 kernal = np.ones((5, 5), "uint8")
                 mask_green = cv.dilate(mask_green, kernal)
