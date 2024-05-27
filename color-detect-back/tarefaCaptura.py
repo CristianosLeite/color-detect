@@ -98,12 +98,10 @@ class TarefaCaptura(Thread):
                 upper_color_array = [int(upper_color_array[0] / 2), int(upper_color_array[1] * 2.55), int(upper_color_array[2] * 2.55)]
 
                 self.lower_color = np.array(lower_color_array)
-                print("lower: ", lower_color_array)
                 self.upper_color = np.array(upper_color_array)
-                print("upper: ", upper_color_array)
 
     def gen(self):
-        ret, jpeg = cv.imencode('.jpg', self.video)
+        _, jpeg = cv.imencode('.jpg', self.video)
         return jpeg.tobytes()
     
     def load_mask(self, mask):
@@ -120,7 +118,7 @@ class TarefaCaptura(Thread):
         points = np.array([self.mask_pos], dtype=np.int32)
         poligono_desenhado = cv.fillPoly(img_resized, points, [255, 255, 255], lineType=cv.LINE_AA)
         img_escala_cinza = cv.cvtColor(poligono_desenhado, cv.COLOR_BGR2GRAY)
-        ret, mascara = cv.threshold(img_escala_cinza, 254, 255, cv.THRESH_BINARY)
+        _, mascara = cv.threshold(img_escala_cinza, 254, 255, cv.THRESH_BINARY)
         return mascara
 
     def modify_mask(self, x1, y1, x2, y2, x3, y3, x4, y4):
@@ -203,9 +201,9 @@ class TarefaCaptura(Thread):
 
                 cv.bitwise_and(inspection_mask, inspection_mask, mask=mask_green)
 
-                contours, hierarchy = cv.findContours(mask_green, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+                contours, _ = cv.findContours(mask_green, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
 
-                for pic, contour in enumerate(contours):
+                for _, contour in enumerate(contours):
                     area = cv.contourArea(contour)
                     if area > 50:
                         x, y, w, h = cv.boundingRect(contour)
