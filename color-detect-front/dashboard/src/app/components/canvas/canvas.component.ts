@@ -1,10 +1,10 @@
 import { Component, Input, ViewChild, ElementRef, Pipe, PipeTransform } from '@angular/core';
-import { DomSanitizer} from '@angular/platform-browser';
+import { DomSanitizer } from '@angular/platform-browser';
 import { ApiServiceService } from '../../services/api-service.service';
 
 @Pipe({ name: 'safe' })
 export class SafePipe implements PipeTransform {
-  constructor(private domSanitizer: DomSanitizer) {}
+  constructor(private domSanitizer: DomSanitizer) { }
   transform(url: string) {
     return this.domSanitizer.bypassSecurityTrustResourceUrl(url);
   }
@@ -38,8 +38,26 @@ export class CanvasComponent {
   }
 
   constructor(private safePipe: SafePipe, private apiService: ApiServiceService) {
+    const defaultUrl = '../../../assets/default.png';
+    this._url = defaultUrl;
     this.apiService.urlEvent.subscribe((url: string) => {
-      this.url = url;
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const img = document.getElementById('video') as HTMLImageElement;
+
+      img.crossOrigin = 'anonymous';
+      canvas.width = img.width;
+      canvas.height = img.height;
+
+      if (url === '') { // If the stream is stopped
+        ctx?.drawImage(img, 0, 0, img.width, img.height);
+        const data = canvas.toDataURL('image/png');
+        this._url = data;
+
+        img.src = this._url;
+      } else {
+        this._url = url;
+      }
     });
   }
 }

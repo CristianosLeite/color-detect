@@ -100,6 +100,7 @@ export class ApiServiceService {
   }
 
   public saveColors(data: Color) {
+    this.stopStream();
     this.http.post<Response>(this.url + this.color, data.color).subscribe((data) => {
       this.text = data.statusText;
 
@@ -118,6 +119,7 @@ export class ApiServiceService {
         confirmButtonText: 'OK'
       });
     });
+    this.startStream();
   }
 
   public getMaskConfig() {
@@ -125,6 +127,7 @@ export class ApiServiceService {
   }
 
   public saveMask(data: Mask) {
+    this.stopStream();
     this.http.post<Response>(this.url + this.mask, data['mask']).subscribe((data) => {
       this.text = data.statusText;
 
@@ -143,6 +146,7 @@ export class ApiServiceService {
         confirmButtonText: 'OK'
       });
     });
+    this.startStream();
   }
 
   public getPlcConfig() {
@@ -150,6 +154,7 @@ export class ApiServiceService {
   }
 
   public updatePlcConfig(plc: Plc['plc']) {
+    this.stopStream();
     this.http.post<Response>(this.url + this.plc, plc).subscribe((data) => {
       console.log(data);
       this.text = data.statusText;
@@ -169,5 +174,6 @@ export class ApiServiceService {
         confirmButtonText: 'OK'
       });
     });
+    this.startStream();
   }
 }
