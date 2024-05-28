@@ -30,7 +30,7 @@ export class ApiServiceService {
   statusControllerEvent = new EventEmitter<boolean>();
   colorEvent = new EventEmitter<Color>();
   maskEvent = new EventEmitter<Mask>();
-  plcEvent = new EventEmitter<any>();
+  plcEvent = new EventEmitter<Plc>();
   urlEvent = new EventEmitter<string>();
 
   constructor(private http: HttpClient) { }
