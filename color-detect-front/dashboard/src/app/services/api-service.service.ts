@@ -6,6 +6,10 @@ import { Mask } from '../interfaces/mask.interface';
 import Swal, { SweetAlertIcon } from 'sweetalert2';
 import { Plc } from '../interfaces/plc.interface';
 
+export interface Controller {
+  ip_address: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -32,7 +36,7 @@ export class ApiServiceService {
   constructor(private http: HttpClient) { }
 
   public connectController(ip: string) {
-    this.http.get<any>(this.url + this.controller).subscribe((data) => {
+    this.http.get<Controller>(this.url + this.controller).subscribe((data) => {
       if (data.ip_address === ip) {
         Swal.fire({
           title: 'Conectado!',
@@ -77,7 +81,8 @@ export class ApiServiceService {
       });
       return;
     }
-    this.http.get<any>(this.url + this.controller).subscribe(() => {
+
+    this.http.get<string>(this.url + this.controller).subscribe(() => {
       this.urlEvent.emit(`http://${this.ip}:4000/cam01`);
     });
   }
@@ -119,6 +124,8 @@ export class ApiServiceService {
         confirmButtonText: 'OK'
       });
     });
+
+    this.connectController(this.ip);
     this.startStream();
   }
 
@@ -146,6 +153,8 @@ export class ApiServiceService {
         confirmButtonText: 'OK'
       });
     });
+
+    this.connectController(this.ip);
     this.startStream();
   }
 
@@ -156,7 +165,6 @@ export class ApiServiceService {
   public updatePlcConfig(plc: Plc['plc']) {
     this.stopStream();
     this.http.post<Response>(this.url + this.plc, plc).subscribe((data) => {
-      console.log(data);
       this.text = data.statusText;
 
       if (data.status === 200) {
@@ -174,6 +182,8 @@ export class ApiServiceService {
         confirmButtonText: 'OK'
       });
     });
+
+    this.connectController(this.ip);
     this.startStream();
   }
 }

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormControl } from '@angular/forms';
 import { ApiServiceService } from '../../services/api-service.service';
@@ -11,7 +11,9 @@ import { Mask } from '../../interfaces/mask.interface';
   templateUrl: './mask-config-card.component.html',
   styleUrl: './mask-config-card.component.scss'
 })
-export class MaskConfigCardComponent {
+export class MaskConfigCardComponent implements OnChanges {
+  @Input() maskChange = {} as Mask;
+
   x1 = new FormControl('');
   y1 = new FormControl('');
   x2 = new FormControl('');
@@ -25,6 +27,12 @@ export class MaskConfigCardComponent {
     this.apiService.maskEvent.subscribe((mask) => {
       this.setMask(mask);
     });
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['maskChange'].currentValue) {
+      this.setMask(changes['maskChange'].currentValue);
+    }
   }
 
   private setMask(data: Mask) {

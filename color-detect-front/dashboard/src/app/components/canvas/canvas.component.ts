@@ -1,6 +1,7 @@
-import { Component, Input, ViewChild, ElementRef, Pipe, PipeTransform } from '@angular/core';
+import { Component, Input, Pipe, PipeTransform, HostListener } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ApiServiceService } from '../../services/api-service.service';
+import { Mask } from '../../interfaces/mask.interface';
 
 @Pipe({ name: 'safe' })
 export class SafePipe implements PipeTransform {
@@ -19,19 +20,16 @@ export class SafePipe implements PipeTransform {
   styleUrl: './canvas.component.scss'
 })
 export class CanvasComponent {
-  @ViewChild('canvas') canvas: ElementRef | undefined;
-  private startX: number = 0;
-  private startY: number = 0;
-  private currentX: number = 0;
-  private currentY: number = 0;
-  private drawing: boolean = false;
+  private drawing = false;
+  private rect = { x: 0, y: 0, width: 0, height: 0 };
 
-  private _url: string = '';
-
+  @Input() mask = {} as Mask;
   @Input()
   set url(url: string) {
     this._url = url;
+
   }
+  private _url: string = '';
 
   get url() {
     return this.safePipe.transform(this._url) as string;
@@ -59,5 +57,62 @@ export class CanvasComponent {
         this._url = url;
       }
     });
+  }
+
+  @HostListener('mousedown', ['$event'])
+  onMouseDown(event: MouseEvent) {
+    this.drawing = true;
+    this.rect.x = event.clientX - 25;
+    this.rect.y = event.clientY - 100;
+  }
+
+  @HostListener('mousemove', ['$event'])
+  onMouseMove(event: MouseEvent) {
+    if (!this.drawing) return;
+    this.rect.width = event.clientX - this.rect.x;
+    this.rect.height = event.clientY - this.rect.y;
+    this.draw();
+  }
+
+  @HostListener('mouseup', ['$event'])
+  onMouseUp() {
+    if (!this.drawing) return;
+    this.drawing = false;
+    this.draw();
+    this.updateMask();
+  }
+
+  draw() {
+    const rectangleElement = document.querySelector('.rectangle') as HTMLElement;
+    rectangleElement.style.left = `${this.rect.x}px`;
+    rectangleElement.style.top = `${this.rect.y}px`;
+    rectangleElement.style.width = `${this.rect.width}px`;
+    rectangleElement.style.height = `${this.rect.height}px`;
+  }
+
+  updateMask() {
+    const mask: Mask = {
+      mask: {
+        mask: [
+          //começa em x
+          String(this.rect.x + 15),
+          //começa em y
+          String(this.rect.y),
+          //caminha em x para a direita
+          String(this.rect.width + this.rect.x - 15),
+          //y permanece o mesmo
+          String(this.rect.y),
+          //x permanece o mesmo
+          String(this.rect.width + this.rect.x - 15),
+          //caminha em y para baixo
+          String(this.rect.height + this.rect.y - 18),
+          //x retorna ao início
+          String(this.rect.x + 15),
+          //y permanece o mesmo
+          String(this.rect.height + this.rect.y - 18)
+        ]
+      }
+    };
+    this.apiService.maskEvent.emit(mask);
   }
 }
