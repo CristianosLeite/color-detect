@@ -56,17 +56,6 @@
   }
 }
 
-// Draw mask
-@keyframes drawMask {
-    0% {
-        stroke-dashoffset: 1000;
-    }
-    100% {
-        stroke-dashoffset: 0;
-    }
-}
-
-/* my-image-with-rectangle.component.css */
 .image-container {
   position: relative;
 }
@@ -75,5 +64,5 @@
   position: absolute;
   border: 2px solid red;
   background-color: transparent;
-  pointer-events: none; /* Prevent the rectangle from blocking clicks on the image */
+  pointer-events: none;
 }

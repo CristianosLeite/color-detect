@@ -1,31 +1,31 @@
 <app-header></app-header>
 <div class="content">
-    <div class="column01">
-        <app-canvas></app-canvas>
+  <div class="column01">
+    <app-canvas></app-canvas>
+  </div>
+  <div class="column02">
+    <div class="subcolumn">
+      <div class="row">
+        <app-mask-config-card></app-mask-config-card>
+      </div>
+      <div class="row">
+        <app-colors-card></app-colors-card>
+      </div>
     </div>
-    <div class="column02">
-        <div class="subcolumn">
-            <div class="row">
-                <app-mask-config-card></app-mask-config-card>
-            </div>
-            <div class="row">
-                <app-colors-card></app-colors-card>
-            </div>
-        </div>
-        <div class="subcolumn">
-            <div class="row">
-                <app-plc-config-card></app-plc-config-card>
-            </div>
-            <div class="row">
-                <app-controller-config-card ip="ip"></app-controller-config-card>
-            </div>
-        </div>
+    <div class="subcolumn">
+      <div class="row">
+        <app-plc-config-card></app-plc-config-card>
+      </div>
+      <div class="row">
+        <app-controller-config-card ip="ip"></app-controller-config-card>
+      </div>
     </div>
-    <div class="column03">
-      <div class="buttons">
-        <button class="btnGreen" title="Iniciar Vídeo" (click)="startStream()" >Iniciar Vídeo</button>
-        <button class="btnBlue" title="Parar Vídeo" (click)="stopStream()" >Parar Vídeo</button>
+  </div>
+  <div class="column03">
+    <div class="buttons">
+      <button class="btnGreen" title="Iniciar Vídeo" (click)="startStream()">Iniciar Vídeo</button>
+      <button class="btnBlue" title="Parar Vídeo" (click)="stopStream()">Parar Vídeo</button>
     </div>
-    </div>
+  </div>
 </div>
 <app-footer></app-footer>

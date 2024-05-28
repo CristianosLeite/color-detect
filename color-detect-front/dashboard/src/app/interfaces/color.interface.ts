@@ -1,6 +1,6 @@
 export interface Color {
-    color: {
-        colormax: string;
-        colormin: string;
-    }
+  color: {
+    colormax: string;
+    colormin: string;
+  }
 }

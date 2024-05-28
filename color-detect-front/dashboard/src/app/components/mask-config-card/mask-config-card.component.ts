@@ -48,7 +48,7 @@ export class MaskConfigCardComponent implements OnChanges {
 
   saveMask() {
     this.apiService.saveMask({
-      mask : {
+      mask: {
         mask: [
           String(this.x1.value) ?? '0',
           String(this.y1.value) ?? '0',

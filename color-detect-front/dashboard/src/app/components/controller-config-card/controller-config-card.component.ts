@@ -4,7 +4,6 @@ import { FormControl } from '@angular/forms';
 import { ApiServiceService } from '../../services/api-service.service';
 import Swal from 'sweetalert2';
 
-
 @Component({
   selector: 'app-controller-config-card',
   standalone: true,
