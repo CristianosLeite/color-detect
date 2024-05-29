@@ -1,15 +1,26 @@
 import os
+import re
 import sys
 import time
-import threading
-import requests
-from PySide6.QtCore import Qt
+import asyncio
+import websockets
 from PySide6.QtWidgets import QApplication, QMainWindow
+from PySide6.QtCore import Qt, QThread, Signal, QTimer
 from interface.design import Ui_MainWindow
 
-URL_IP_ADDRESS = 'http://127.0.0.1:4000/cam01/get_ip_address'
-URL_STATUS_CAM01 = 'http://127.0.0.1:4000/cam01/get_status_run'
-URL_STATUS_PLC_CAM01 = 'http://127.0.0.1:4000/cam01/plc'
+
+class StatusThread(QThread):
+    status_signal = Signal(str)
+
+    def __init__(self, interface):
+        QThread.__init__(self)
+        self.interface = interface
+
+    def run(self):
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        loop.run_until_complete(self.interface.get_status())
+        loop.close()
 
 
 class Interface(QMainWindow, Ui_MainWindow):
@@ -23,77 +34,110 @@ class Interface(QMainWindow, Ui_MainWindow):
         # threads cameras
         self.thread_cam01 = None
 
-        # Atualiza endereço IP atual da placa
-        self.request_get_ip()
-
         self.ButtonRestart.clicked.connect(self.execute_reboot)
         self.ButtonShutdown.clicked.connect(self.execute_shutdown)
 
         # configurar labels para valor inicial
+        self.labelIPAddress.setText('API em erro')
+        self.labelIPAddress.setStyleSheet("background-color: red; border: 1px solid black;")
+
         self.LabelStatusCam01.setText('Câmera em erro')
         self.LabelStatusCam01.setStyleSheet("background-color: red; border: 1px solid black;")
 
         self.LabelStatusPLC01.setText('PLC desconectado')
         self.LabelStatusPLC01.setStyleSheet("background-color: red; border: 1px solid black;")
 
-        self.get_status_cam01()
-        self.get_status_plc01()
+        self.status_thread = StatusThread(self)
+        self.status_thread.status_signal.connect(self.update_camera_status)
+        self.status_thread.start()
 
-    def request_get_ip(self):
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.update_interface)
+        self.timer.start(1000)
+
+    def update_interface(self):
+        self.status_thread.status_signal.connect(self.update_camera_status)
+        self.status_thread.status_signal.connect(self.update_plc_status)
+        self.status_thread.status_signal.connect(self.update_api_status)
+
+    def update_camera_status(self, status):
         try:
-            request = requests.get(URL_IP_ADDRESS)
-            print(request)
-            req_json = request.json()
-
-            if req_json['ip_address']:
-                self.labelIPAddress.setText(req_json['ip_address'])
-                self.labelIPAddress.setStyleSheet("background-color: green; border: 1px solid black;")
-            else:
-                self.labelIPAddress.setText('IP não encontrado')
-                self.labelIPAddress.setStyleSheet("background-color: red; border: 1px solid black;")
-        except Exception as e:
-            print('Erro ao buscar ip: ', e)
-            self.labelIPAddress.setText('Erro de conexão API')
-            self.labelIPAddress.setStyleSheet("background-color: red; border: 1px solid black;")
-
-    def get_status_cam01(self):
-        try:
-            request = requests.get(URL_STATUS_CAM01)
-            req_json = request.json()
-
-            if req_json['run'] == True:
+            if status == 'True':
                 self.LabelStatusCam01.setText('Câmera ok')
                 self.LabelStatusCam01.setStyleSheet("background-color: green; border: 1px solid black;")
             else:
                 self.LabelStatusCam01.setText('Câmera em erro')
                 self.LabelStatusCam01.setStyleSheet("background-color: red; border: 1px solid black;")
-        except:
-            self.LabelStatusCam01.setText('Erro de conexão API')
-            self.LabelStatusCam01.setStyleSheet("background-color: red; border: 1px solid black;")
+        except Exception as e:
+            print(f"Error in update_camera_status: {e}")
 
-    def get_status_plc01(self):
+    def update_plc_status(self, status):
         try:
-            request = requests.get(URL_STATUS_PLC_CAM01)
-            req_json = request.json()
-
-            if req_json['conectado'] == True:
+            if status == 'True':
                 self.LabelStatusPLC01.setText('PLC conectado')
                 self.LabelStatusPLC01.setStyleSheet("background-color: green; border: 1px solid black;")
             else:
                 self.LabelStatusPLC01.setText('PLC desconectado')
                 self.LabelStatusPLC01.setStyleSheet("background-color: red; border: 1px solid black;")
-        except:
-            self.LabelStatusPLC01.setText('Erro de conexão API')
-            self.LabelStatusPLC01.setStyleSheet("background-color: red; border: 1px solid black;")
+        except Exception as e:
+            print(f"Error in update_plc_status: {e}")
 
-    def get_status(self):
+    def update_api_status(self, status):
+        try:
+            ip_pattern = re.compile(r'^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$')
+            if ip_pattern.match(status):
+                self.labelIPAddress.setText(str(status))
+                self.labelIPAddress.setStyleSheet("background-color: green; border: 1px solid black;")
+            else:
+                self.labelIPAddress.setText('API em erro')
+                self.labelIPAddress.setStyleSheet("background-color: red; border: 1px solid black;")
+        except Exception as e:
+            print(f"Error in update_api_status: {e}")
+
+    async def camera_status_client(self):
         while True:
-            self.request_get_ip()
-            time.sleep(1)
-            self.get_status_cam01()
-            time.sleep(2)
-            self.get_status_plc01()
-            time.sleep(1)
+            try:
+                async with websockets.connect('ws://localhost:8765') as websocket:
+                    while True:
+                        status = await websocket.recv()
+                        self.update_camera_status(str(status))
+            except Exception as e:
+                self.LabelStatusCam01.setText('Câmera em erro')
+                self.LabelStatusCam01.setStyleSheet("background-color: red; border: 1px solid black;")
+                print(f"Error in camera_status_client: {e}")
+                await asyncio.sleep(1)
+
+    async def plc_status_client(self):
+        while True:
+            try:
+                async with websockets.connect('ws://localhost:8766') as websocket:
+                    while True:
+                        status = await websocket.recv()
+                        self.update_plc_status(str(status))
+            except Exception as e:
+                self.LabelStatusPLC01.setText('PLC desconectado')
+                self.LabelStatusPLC01.setStyleSheet("background-color: red; border: 1px solid black;")
+                print(f"Error in plc_status_client: {e}")
+                await asyncio.sleep(1)
+
+    async def api_status_client(self):
+        while True:
+            try:
+                async with websockets.connect('ws://localhost:8767') as websocket:
+                    while True:
+                        status = await websocket.recv()
+                        self.update_api_status(str(status))
+            except Exception as e:
+                self.labelIPAddress.setText('API em erro')
+                self.labelIPAddress.setStyleSheet("background-color: red; border: 1px solid black;")
+                print(f"Error in api_status_client: {e}")
+                await asyncio.sleep(1)
+
+    async def get_status(self):
+        task_cam = asyncio.create_task(self.camera_status_client())
+        task_plc = asyncio.create_task(self.plc_status_client())
+        task_api = asyncio.create_task(self.api_status_client())
+        await asyncio.gather(task_cam, task_plc, task_api)
 
     def execute_shutdown(self):
         os.system("sudo shutdown -h now")
@@ -103,10 +147,10 @@ class Interface(QMainWindow, Ui_MainWindow):
         os.system("sudo shutdown -r now")
         time.sleep(1)
 
+
 if __name__ == '__main__':
     qt = QApplication(sys.argv)
     interface = Interface()
     interface.show()
-    threading.Thread(target=interface.get_status).start()
     qt.exec()
-    sys.exit()
+    sys.exit(qt.exec())
