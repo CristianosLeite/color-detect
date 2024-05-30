@@ -7,7 +7,7 @@ class WebsocketServer:
 
     async def camera_status(self, websocket):
         while True:
-            status = str(self.tfc01.cam_run)
+            status = str(self.tfc01.get_status_run())
             await websocket.send(status)
             await asyncio.sleep(1)
 

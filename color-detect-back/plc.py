@@ -1,7 +1,7 @@
 import snap7
-from snap7.types import Areas, WordLen
-from typing import TypedDict
 import database as db
+from typing import TypedDict
+from snap7.types import Areas, WordLen
 
 
 db = db.Database()
@@ -71,20 +71,20 @@ class PLC:
     def get_plc_data(self):
         return self.data
         
-    def write_area(self):
+    def write_area(self, var_cam):
         if self.has_plc:
             try:
+                db_number, start_bit = var_cam.split(',')
                 self.s7.as_write_area(
                     area=Areas.DB,
-                    dbnumber=self.db_number,
-                    start=self.start_bit,
+                    dbnumber=int(db_number),
+                    start=int(start_bit),
                     size=1,
                     wordlen=WordLen.Bit,
                     pusrdata=bytearray([0b00000001])
                 )
             except Exception as e:
-                print(f'Error writing to PLC: {e}')          
-                self.has_plc = False
+                print(f'Error writing to PLC: {e}')
 
     def close_plc(self):
         self.s7.disconnect()
