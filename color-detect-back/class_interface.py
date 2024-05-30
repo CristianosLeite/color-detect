@@ -19,8 +19,11 @@ class StatusThread(QThread):
     def run(self):
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
-        loop.run_until_complete(self.interface.get_status())
-        loop.close()
+        try:
+            loop.run_until_complete(self.interface.get_status())
+        except Exception as e:
+            print(f"Error in StatusThread: {e}")
+            loop.close()
 
 
 class Interface(QMainWindow, Ui_MainWindow):
