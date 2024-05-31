@@ -14,7 +14,7 @@ export interface Controller {
   providedIn: 'root'
 })
 export class ApiServiceService {
-  baseUrl = 'http://127.0.0.1:4000/';
+  baseUrl = location.origin.split(":8080")[0] + ':4000/';
   endpoint = 'cam01/'
   controller = 'get_ip_address'
   color = 'color';
