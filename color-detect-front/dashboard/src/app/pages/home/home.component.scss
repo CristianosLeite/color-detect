@@ -1,0 +1,146 @@
+.content {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  min-height: 90vh;
+  background-color: #f5f5f5;
+}
+
+.column01 {
+  display: flex;
+  padding: 0;
+  margin: 15px;
+  justify-content: center;
+}
+
+.column02 {
+  display: flex;
+  flex-direction: row;
+  max-width: 800px;
+  flex: 1;
+  padding: 0;
+  margin: 3px;
+}
+
+.column03 {
+  display: flex;
+  flex-direction: column;
+  max-width: 560px;
+  flex: 1;
+  padding: 0;
+  margin: 3px;
+}
+
+.subcolumn {
+  display: flex;
+  width: 500px;
+  flex-direction: column;
+  flex: 1;
+  padding: 0;
+  margin: 5px;
+  margin-top: 0;
+}
+
+.row {
+  display: block;
+  height: 250px;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: center;
+  padding: 0;
+  margin-bottom: 18px;
+}
+
+.btnGreen {
+  background-color: #00a54f;
+  border-color: #00a54f;
+  color: #fff;
+  border-style: solid;
+  border-radius: 3px;
+
+  width: 250px;
+  min-width: 250px;
+  height: 40px;
+
+  cursor: pointer;
+
+  margin: 5px;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+
+.btnBlue {
+  background-color: #0a365e;
+  border-color: #0a365e;
+  color: #fff;
+  border-style: solid;
+  border-radius: 3px;
+
+  width: 250px;
+  min-width: 250px;
+  height: 40px;
+
+  cursor: pointer;
+
+  margin: 5px;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+
+.buttons {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  max-width: 560px;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 0;
+  margin: 0;
+}
+
+@media screen and (min-width: 768px) {
+  .content {
+    scale: 0.9;
+    min-height: 80vh;
+  }
+
+  .row {
+    scale: 0.9;
+    margin-top: -15px;
+  }
+}
+
+@media screen and (max-width: 1920px) {
+  .content {
+    scale: 1.0;
+    padding: 5px;
+  }
+
+  .row {
+    scale: 1.0;
+    margin-top: 2px;
+  }
+
+  .column01 {
+    scale: 1.0;
+    padding-top: 3px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .column02 {
+    flex-wrap: wrap;
+  }
+
+  .row {
+    max-width: 350px;
+  }
+
+  .content {
+    scale: 0.9;
+  }
+}

@@ -1,0 +1,15 @@
+<div class="card">
+    <div class="header">
+        <h2 class="title">Controlador</h2>
+    </div>
+    <div class="content">
+        <p>
+            Entre com o IP do controlador para conectar.
+        </p>
+        <div class="row">
+            <label for="ip">IP:</label>
+            <input type="text" id="ip" name="ip" placeholder="000.000.000.000" [formControl]="ip"/>
+        </div>
+        <button class="btnBlue" title="Salvar" (click)="connectController()">Conectar</button>
+    </div>
+</div>

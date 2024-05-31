@@ -148,7 +148,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "ConColorDetect v1.0"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "ConColorDetect v1.2"))
         MainWindow.setWindowIcon(QtGui.QIcon(os.path.join(ROOT_DIR, 'favicon.ico')))
         self.LabelCam01.setText(_translate("MainWindow", "Status do sistema"))
         self.labelIP.setText(_translate("MainWindow", "IP:"))
@@ -159,6 +159,6 @@ class Ui_MainWindow(object):
         self.ButtonShutdown.setText(_translate("MainWindow", "Shutdown"))
         self.LabelStatusCam01_2.setText(_translate("MainWindow", "Câmera:"))
         self.LabelStatusCam01_3.setText(_translate("MainWindow", "PLC:"))
-        self.labelIPAddress_2.setText(_translate("MainWindow", "Color Detect v1.1"))
+        self.labelIPAddress_2.setText(_translate("MainWindow", "Color Detect v1.2"))
         self.labelIPAddress_2.setStyleSheet("color: rgb(255, 255, 255);")
         self.LabelCam01_2.setText(_translate("MainWindow", "Conecsa Automação e Ti - 2024"))

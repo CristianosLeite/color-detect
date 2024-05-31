@@ -1,0 +1,23 @@
+<div class="card">
+  <div class="header">
+    <h2 class="title">Configuração PLC</h2>
+  </div>
+
+  <div class="content">
+    <div class="row">
+      <label for="ip">IP:</label>
+      <input type="text" id="ip" name="ip" placeholder="000.000.000.000" [formControl]="ip" />
+      <label for="rack">Rack:</label>
+      <input type="number" id="rack" name="rack" min="0" max="255" [formControl]="rack" />
+      <label for="slot">Slot:</label>
+      <input type="number" id="slot" name="slot" min="0" max="255" [formControl]="slot" />
+    </div>
+    <div class="row">
+      <label for="db">DB:</label>
+      <input type="number" id="db" name="db" min="0" max="1000" [formControl]="db" />
+      <label for="start">Bit:</label>
+      <input type="number" id="bit" name="bit" min="0" max="9999" [formControl]="bit" />
+    </div>
+    <button class="btnBlue" title="Salvar" (click)="updatePlc()">Salvar PLC</button>
+  </div>
+</div>
