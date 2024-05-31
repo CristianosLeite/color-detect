@@ -1,4 +1,4 @@
 <div class="image-container">
   <img id="video" class="canvas" [src]="url" name="video" draggable="false" />
-    <div class="rectangle"></div>
+      <div class="rectangle" *ngIf="isDrawing"></div>
 </div>

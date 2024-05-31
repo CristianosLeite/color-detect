@@ -2,6 +2,7 @@ import { Component, Input, Pipe, PipeTransform, HostListener } from '@angular/co
 import { DomSanitizer } from '@angular/platform-browser';
 import { ApiServiceService } from '../../services/api-service.service';
 import { Mask } from '../../interfaces/mask.interface';
+import { NgIf } from '@angular/common';
 
 @Pipe({ name: 'safe' })
 export class SafePipe implements PipeTransform {
@@ -15,19 +16,18 @@ export class SafePipe implements PipeTransform {
   selector: 'app-canvas',
   standalone: true,
   providers: [SafePipe],
-  imports: [],
+  imports: [NgIf],
   templateUrl: './canvas.component.html',
   styleUrl: './canvas.component.scss'
 })
 export class CanvasComponent {
-  private drawing = false;
+  public isDrawing = false;
   private rect = { x: 0, y: 0, width: 0, height: 0 };
 
   @Input() mask = {} as Mask;
   @Input()
   set url(url: string) {
     this._url = url;
-
   }
   private _url: string = '';
 
@@ -61,14 +61,14 @@ export class CanvasComponent {
 
   @HostListener('mousedown', ['$event'])
   onMouseDown(event: MouseEvent) {
-    this.drawing = true;
+    this.isDrawing = true;
     this.rect.x = event.clientX - 25;
     this.rect.y = event.clientY - 100;
   }
 
   @HostListener('mousemove', ['$event'])
   onMouseMove(event: MouseEvent) {
-    if (!this.drawing) return;
+    if (!this.isDrawing) return;
     this.rect.width = event.clientX - this.rect.x;
     this.rect.height = event.clientY - this.rect.y;
     this.draw();
@@ -76,8 +76,8 @@ export class CanvasComponent {
 
   @HostListener('mouseup', ['$event'])
   onMouseUp() {
-    if (!this.drawing) return;
-    this.drawing = false;
+    if (!this.isDrawing) return;
+    this.isDrawing = false;
     this.draw();
     this.updateMask();
   }
