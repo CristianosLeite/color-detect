@@ -1,0 +1,77 @@
+body {
+    display: flex;
+    flex-flow: column;
+    background-color: rgb(0, 0, 127);
+}
+
+.header {
+    display: flex;
+    flex-wrap: wrap;
+    flex-flow: row;
+    justify-content: space-around
+}
+
+.header-text {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #fff;
+    margin-left: 60px;
+    margin-top: -40px;
+}
+
+.right-side-header {
+    display: flex;
+    align-items: center;
+}
+
+.content {
+    background-color: rgb(10, 54, 94);
+    margin-top: 10px;
+    margin-bottom: 10px;
+    display: flex;
+    flex-grow: 1;
+}
+
+button {
+    background-color: green;
+    color: antiquewhite;
+    border: none;
+    margin: 5px;
+    min-height: 40px;
+    min-width: 100px;
+}
+
+label {
+    margin-bottom: 12px;
+}
+
+input {
+    background-color: rgb(157, 0, 0);
+    margin-bottom: 10px;
+}
+
+.buttons {
+    display: flex;
+    flex-flow: column;
+    margin: 20px;
+}
+
+.status {
+    padding: 42px;
+    display: flex;
+    flex-flow: row;
+}
+
+.labels {
+    display: flex;
+    flex-flow: column;
+    padding-top: 2px;
+}
+
+.inputs {
+    display: flex;
+    flex-flow: column;
+}
+
+.footer {
+    background-color: rgb(10, 54, 94);
+}

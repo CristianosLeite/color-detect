@@ -1,0 +1,59 @@
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Detect v1.2</title>
+    <link rel="icon" href="./favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="./styles.css">
+    <script src="app.js"></script>
+</head>
+
+<body>
+    <div class="header">
+        <div class="left-side-header">
+            <img src="./logo.png" alt="Conecsa Logo" class="header-logo" width="200px">
+            <div class="header-text">
+                <h3>Color Detect v1.2</h3>
+            </div>
+        </div>
+        <div class="right-side-header">
+            <label for="ip-address">
+                IP:
+            </label>
+            <input id="ip" type="text" contenteditable="false">
+        </div>
+    </div>
+    <div class="content">
+        <div class="buttons">
+            <button id="restart">
+                Restart
+            </button>
+            <button id="shutdown">
+                Shutdown
+            </button>
+        </div>
+        <div class="status">
+            <div class="labels">
+                <label for="status-camera">
+                    Câmera:
+                </label>
+                <label for="status-plc">
+                    PLC:
+                </label>
+            </div>
+            <div class="inputs">
+                <input id="status-camera" type="text" contenteditable="false">
+                <input id="status-plc" type="text" contenteditable="false">
+            </div>
+        </div>
+    </div>
+    <!-- Footer -->
+    <footer class="footer">
+        <p class="footer-text">
+            &copy; 2024 Conecsa Automação e Ti.
+        </p>
+    </footer>
+</body>
+
+</html>
