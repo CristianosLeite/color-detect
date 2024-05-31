@@ -2,7 +2,7 @@ import os
 import signal
 import cv2 as cv
 import numpy as np
-from flask import Flask
+import threading
 from threading import Thread
 from plc import PLC
 from mask_config import MaskConfig
@@ -10,8 +10,6 @@ from mask_config import MaskConfig
 
 mc = MaskConfig()
 plc = PLC()
-
-app = Flask(__name__)
 
 class Inspection(Thread):
 
@@ -34,8 +32,8 @@ class Inspection(Thread):
     def get_plc_status(self):
         return plc.get_cpu_state()
     
-    def update_plc(self, plc: PLC):
-        return plc.update_plc(plc)
+    def update_plc(self, plc_data: PLC):
+        return plc.update_plc(plc_data)
     
     def get_plc(self):
         return plc.get_plc()
@@ -75,20 +73,20 @@ class Inspection(Thread):
         for _, contour in enumerate(contours):
             area = cv.contourArea(contour)
             if area > 50:
-                plc.write_area(plc.data['var_cam'])
+                threading.Thread(target=plc.write_area, args=(plc.data['var_cam'],)).start()
                 x, y, w, h = cv.boundingRect(contour)
                 cv.rectangle(inspection_mask, (x, y), (x + w, y + h), (0, 255, 0), 2)
                 cv.putText(inspection_mask, "Cor detectada!", (x, y), cv.FONT_HERSHEY_SIMPLEX, 1.0, (0, 255, 0))
 
         return inspection_mask
-
+    
     def run(self):
         while self.ThreadActive:
             if not self.cam_run and not self.start_camera():
                 return
 
             if not plc.has_plc:
-                plc.connect_plc()
+                threading.Thread(target=plc.connect_plc).start()
 
             ret, frame = self.cap.read()
             if ret:
@@ -104,7 +102,3 @@ class Inspection(Thread):
         self.cap.release()
         cv.destroyAllWindows()
         os.kill(os.getpid(), signal.SIGTERM)
-
-
-if __name__ == '__main__':
-    app.run()

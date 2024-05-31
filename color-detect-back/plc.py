@@ -1,5 +1,6 @@
 import snap7
 import database as db
+from time import sleep
 from typing import TypedDict
 from snap7.types import Areas, WordLen
 
@@ -56,14 +57,16 @@ class PLC:
             return True
         except Exception as e:
             self.has_plc = False
-            print(f"Error in connect_plc: {e}")
+            print(f"Erro ao conectar ao PLC: {e}")
+            sleep(2)
             return False
 
     def update_plc(self, plc: Plc):
         if plc:
             db.save_plc(plc)
             print('PLC atualizado com sucesso!')
-            self.data = plc
+            self.data = {key: plc[key] for key in ['ip', 'rack', 'slot', 'var_cam']}
+            print(f"PLC data: {self.data}")
             return {"statusText": "PLC Atualizado com sucesso!", 'conectado': plc, 'status': 200}
         else:
             return {"statusText": "Nenhum dado foi informado na requisição.", 'status': 400}
@@ -85,6 +88,7 @@ class PLC:
                 )
             except Exception as e:
                 print(f'Error writing to PLC: {e}')
+                sleep(2)
 
     def close_plc(self):
         self.s7.disconnect()
