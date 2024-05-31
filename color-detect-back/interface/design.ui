@@ -19,7 +19,7 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>ConColorDetect v1.0</string>
+   <string>ConColorDetect v1.2</string>
   </property>
   <property name="styleSheet">
    <string notr="true">background-color: rgb(0, 165, 79);</string>
@@ -267,7 +267,7 @@ color: rgb(0, 0, 0);</string>
      </font>
     </property>
     <property name="text">
-     <string>Color Detect v1.0</string>
+     <string>Color Detect v1.2</string>
     </property>
    </widget>
    <widget class="QLabel" name="label">
