@@ -1,5 +1,4 @@
 import snap7
-from time import sleep
 from typing import TypedDict
 from database import postgreSQL
 from snap7.types import Areas, WordLen
@@ -32,6 +31,8 @@ class PLC:
     def __init__(self):
         self.s7 = snap7.client.Client()
         self.has_plc = False
+        self.is_conneting = False
+        self.is_writing = False
         self.data = {
             'ip': '172.18.176.200',
             'rack': '0',
@@ -46,7 +47,10 @@ class PLC:
         self.get_cpu_state()
 
     def connect_plc(self):
+        if self.is_connecting:
+            return False
         try:
+            self.is_connecting = True
             self.s7.connect(
                 address=self.data['ip'],
                 rack=int(self.data['rack']),
@@ -55,11 +59,12 @@ class PLC:
             )
             print('PLC conectado com sucesso!')
             self.has_plc = True
+            self.is_connecting = False
             return True
         except Exception as e:
             self.has_plc = False
             print(f"Erro ao conectar ao PLC: {e}")
-            sleep(2)
+            self.is_connecting = False
             return False
 
     def update_plc(self, plc: Plc):
@@ -76,8 +81,11 @@ class PLC:
         return self.data
         
     def write_area(self, var_cam):
+        if self.is_writing:
+            return False
         if self.has_plc:
             try:
+                self.is_writing = True
                 db_number, start_bit = var_cam.split(',')
                 self.s7.as_write_area(
                     area=Areas.DB,
@@ -87,9 +95,10 @@ class PLC:
                     wordlen=WordLen.Bit,
                     pusrdata=bytearray([0b00000001])
                 )
+                self.is_writing = False
             except Exception as e:
                 print(f'Error writing to PLC: {e}')
-                sleep(2)
+                self.is_writing = False
 
     def close_plc(self):
         self.s7.disconnect()
