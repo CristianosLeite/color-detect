@@ -1,11 +1,12 @@
 import snap7
-import database as db
 from time import sleep
 from typing import TypedDict
+from database import postgreSQL
 from snap7.types import Areas, WordLen
 
 
-db = db.Database()
+db_instance = postgreSQL.Database()
+db = db_instance
 
 class Plc(TypedDict):
     """

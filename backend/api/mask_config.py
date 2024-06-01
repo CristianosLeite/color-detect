@@ -3,10 +3,11 @@ import cv2 as cv
 import numpy as np
 import colorsys
 from typing import List
-import database as db
+from database import postgreSQL
 
 
-db = db.Database()
+db_instance = postgreSQL.Database()
+db = db_instance
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -53,7 +54,7 @@ class MaskConfig:
         self.modify_mask(*self.array_mask)
 
     def config_mask(self):
-        img = cv.imread(os.path.join(ROOT_DIR, 'assets/mask.png'), cv.IMREAD_UNCHANGED)
+        img = cv.imread(os.path.join(ROOT_DIR, '../assets/mask.png'), cv.IMREAD_UNCHANGED)
         img_resized = cv.resize(img, (640, 480))
         points = np.array([self.mask_pos], dtype=np.int32)
         fill_polly = cv.fillPoly(img_resized, points, [255, 255, 255], lineType=cv.LINE_AA)

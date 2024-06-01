@@ -1,7 +1,7 @@
 import re
 import psycopg2
 from psycopg2.extras import RealDictCursor
-from credentials import db_credentials
+from database.credentials import db_credentials
 
 
 # Configure PostgreSQL connection parameters
