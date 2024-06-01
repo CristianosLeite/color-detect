@@ -16,15 +16,11 @@ def start_services():
     # Muda para o diretório do controlador e inicializa a interface
     npm_process = subprocess.Popen(f"cd {os.path.join(ROOT_DIR, 'controller/electron-interface')} && npm run start", shell=True, stdout=subprocess.PIPE)
 
-    # Muda para o diretório do front-end e inicializa a interface
-    frontend_process = subprocess.Popen(f"cd {os.path.join(ROOT_DIR, '../frontend')} && ng serve --configuration production", shell=True, stdout=subprocess.PIPE)
-
-    return api_process, npm_process, frontend_process
+    return api_process, npm_process
 
 if __name__ == "__main__":
-    api_process, npm_process, frontend_process = start_services()
+    api_process, npm_process = start_services()
 
     # Imprime a saída dos processos
     print(api_process.stdout.read())
     print(npm_process.stdout.read())
-    print(frontend_process.stdout.read())
