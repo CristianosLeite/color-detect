@@ -2,8 +2,8 @@
 
 ## Sistema para detecção de cores industrial
 
-Este sistema foi projetado pensando em uma solução para detecção de cores em um processo industrial. O sistema é capaz de detectar cores em tempo real e informar ao usuário se a cor detectada está dentro dos padrões definidos pelo próprio usuário.
-O sistema conta com uma interface web para configuração dos parâmetros de detecção e e visualização dos resultados em tempo real e uma interface desktop que pode ser carregada em um Raspberry Pi para ser utilizada em um processo industrial como um controlador e visualizador de status do sistema.
+Este sistema foi projetado pensando em uma solução para detecção de cores em um processo industrial. O sistema é capaz de detectar cores em tempo real e informar ao usuário se a cor detectada está dentro dos limites definidos pelo próprio usuário.
+O sistema conta com uma interface web para configuração dos parâmetros de detecção e visualização dos resultados em tempo real e uma interface desktop que pode ser carregada em um Raspberry Pi para ser utilizada em um processo industrial como um controlador e visualizador de status do sistema.
 
 ## Installation
 
@@ -19,16 +19,16 @@ git clone https://github.com/CristianosLeite/color-detect.git
 2. Install the dependencies.
 
 ```bash
-cd color-detect/color-detect-back
+cd color-detect/backend
 pip install -r requirements.txt
 ```
 Este projeto foi desenvolvido utilizando o PostgreSQL como banco de dados. Após instalar e configurar o PostgreSQL, crie um arquivo com o nome `credentials.py`:
 
 ```bash
-touch credentials.py
+touch api/database/credentials.py
 ```
 
-No Windows utilize o comando `type nul > credentials.py` para criar o arquivo.
+No Windows utilize o comando `type nul > api/database/credentials.py` para criar o arquivo.
 
 Declare uma variavel db_credentials no arquivo `credentials.py` com as credenciais do banco de dados:
 
@@ -50,11 +50,7 @@ Obs: Caso opte por utilizar variáveis de ambiente, é necessário alterar o arq
 3. Run the application.
 
 ```bash
-python api.py
-```
-
-```bash	
-python class_interface.py
+python main.py
 ```
 
 Ao executar o comando a interface desktop e a API serão iniciadas.
@@ -67,10 +63,10 @@ Necessário ter o Node.js instalado na máquina.
 
 Para instalar o frontend do projeto, siga os seguintes passos:
 
-1. Go to the `color-detect-front` directory.
+1. Go to the `frontend` directory.
 
 ```bash
-cd ../color-detect-front
+cd ../frontend
 ```
 
 2. Run `npm install` to install the dependencies.
@@ -87,9 +83,9 @@ npm start
 
 ## Usage
 
-A interface web pode ser acessada através do endereço `http://localhost:3000/`.
+A interface web pode ser acessada através do endereço `http://localhost:4200/`.
 
-Após acessar a interface web, é necessário que já tenha um plc conectado à mesma rede para que seja possível a comunicação entre o plc e a interface web.
+Após acessar a interface web, é necessário que já tenha um plc Siemens conectado à mesma rede para que seja possível a comunicação entre o plc e a interface web.
 
 Alternativamente você pode utilizar um serviço como o [pm2](https://github.com/Unitech/pm2) para iniciar a aplicação em background.
 
