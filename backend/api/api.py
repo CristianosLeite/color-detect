@@ -1,3 +1,4 @@
+import os
 import socket
 import asyncio
 from flask import Flask, Response, request, jsonify
@@ -102,6 +103,24 @@ def save_mask_01():
         return jsonify(tfc01.get_mask())
     else:
         return jsonify({"statusText": "Método não permitido", "status": 405})
+
+# Restart
+@app.route('/restart', methods=['POST'])
+def restart():
+    try:
+        os.system('sudo shutdown now -r')
+        return jsonify({'status': 'success', 'message': 'System is restarting...'})
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)})
+
+# Shutdown
+@app.route('/shutdown', methods=['POST'])
+def shutdown():
+    try:
+        os.system('sudo shutdown now')
+        return jsonify({'status': 'success', 'message': 'System is shutting down...'})
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)})
 
 
 if __name__ == '__main__':

@@ -40,3 +40,29 @@ socketApi.onmessage = function (event) {
         document.querySelector("#ip").style.backgroundColor = 'red';
     }
 };
+
+// Pega os botões pelo ID
+var restartButton = document.querySelector("#restart");
+var shutdownButton = document.querySelector("#shutdown");
+
+// Adiciona um evento de clique para o botão de reiniciar
+restartButton.addEventListener('click', function() {
+    // Faz uma requisição POST para o servidor para reiniciar o sistema
+    fetch('/restart', {method: 'POST'})
+    .then(response => response.text())
+    .then(data => console.log(data))
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+});
+
+// Adiciona um evento de clique para o botão de desligar
+shutdownButton.addEventListener('click', function() {
+    // Faz uma requisição POST para o servidor para desligar o sistema
+    fetch('/shutdown', {method: 'POST'})
+    .then(response => response.text())
+    .then(data => console.log(data))
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+});
