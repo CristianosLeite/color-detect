@@ -2,6 +2,7 @@ body {
     display: flex;
     flex-flow: column;
     background-color: rgb(0, 0, 127);
+    overflow: hidden;
 }
 
 .header {
