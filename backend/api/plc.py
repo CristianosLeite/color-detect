@@ -31,7 +31,7 @@ class PLC:
     def __init__(self):
         self.s7 = snap7.client.Client()
         self.has_plc = False
-        self.is_conneting = False
+        self.is_connecting = False
         self.is_writing = False
         self.data = {
             'ip': '172.18.176.200',
