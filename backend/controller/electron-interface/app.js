@@ -48,7 +48,7 @@ var shutdownButton = document.querySelector("#shutdown");
 // Adiciona um evento de clique para o botão de reiniciar
 restartButton.addEventListener('click', function() {
     // Faz uma requisição POST para o servidor para reiniciar o sistema
-    fetch('/restart', {method: 'POST'})
+    fetch('http://localhost:4000/restart', {method: 'POST'})
     .then(response => response.text())
     .then(data => console.log(data))
     .catch((error) => {
@@ -59,7 +59,7 @@ restartButton.addEventListener('click', function() {
 // Adiciona um evento de clique para o botão de desligar
 shutdownButton.addEventListener('click', function() {
     // Faz uma requisição POST para o servidor para desligar o sistema
-    fetch('/shutdown', {method: 'POST'})
+    fetch('http://localhost:4000/shutdown', {method: 'POST'})
     .then(response => response.text())
     .then(data => console.log(data))
     .catch((error) => {

@@ -105,19 +105,21 @@ def save_mask_01():
         return jsonify({"statusText": "Método não permitido", "status": 405})
 
 # Restart
-@app.route('http://localhost:4000/restart', methods=['POST'])
+@app.route('/restart', methods=['POST'])
 def restart():
     try:
         os.system('sudo shutdown now -r')
+        print('System is restarting...')
         return jsonify({'status': 'success', 'message': 'System is restarting...'})
     except Exception as e:
         return jsonify({'status': 'error', 'message': str(e)})
 
 # Shutdown
-@app.route('http://localhost:4000/shutdown', methods=['POST'])
+@app.route('/shutdown', methods=['POST'])
 def shutdown():
     try:
         os.system('sudo shutdown now')
+        print('System is shutting down...')
         return jsonify({'status': 'success', 'message': 'System is shutting down...'})
     except Exception as e:
         return jsonify({'status': 'error', 'message': str(e)})
