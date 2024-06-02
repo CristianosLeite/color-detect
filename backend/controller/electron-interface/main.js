@@ -45,24 +45,15 @@ app.whenReady().then(createWindow);
 
 // Quando clicarmos no botão de fechar a janela no app desktop
 // O evento vai ser ouvido aqui no arquivo main.js e algum procedimento pode ser realizado
-// tipo fechar alguma conexão de banco de dados por exemplo.
 app.on("window-all-closed", () => {
-  // No MacOS quando fecha uma janela, na verdade ela é "minimizada"
-  // e o processo executa em segundo-plano tipo um app do celular
-  // Para fechar e encerrar o app tem que teclar Cmd+Q ou no dock (barra de tarefas)
-  // clicar com botão direito e encerrar o app
   if (process.platform !== "darwin") {
     app.quit();
   }
 });
 
 app.on("activate", () => {
-  // Esse evento é disparado pelo MacOS quando clica no ícone do aplicativo no Dock.
   // Basicamente cria a janela se não foi criada.
   if (BrowserWindow.getAllWindows().length === 0) {
     createWindow();
   }
 });
-
-// Abaixo você pode colocar seus códigos específicos do BackEnd que precisam executar no processo principal
-// pode criar pastas e arquivos separados e importar aqui (boa prática).
